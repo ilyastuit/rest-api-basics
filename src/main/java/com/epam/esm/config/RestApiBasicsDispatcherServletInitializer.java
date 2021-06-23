@@ -1,8 +1,21 @@
 package com.epam.esm.config;
 
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+
 public class RestApiBasicsDispatcherServletInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+
+    @Override
+    public void onStartup(ServletContext servletContext) throws ServletException {
+        AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
+        rootContext.register(ServletConfig.class);
+        rootContext.register(DataSourceConfig.class);
+        rootContext.register(PropertyConfig.class);
+        super.onStartup(servletContext);
+    }
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
@@ -11,7 +24,7 @@ public class RestApiBasicsDispatcherServletInitializer extends AbstractAnnotatio
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[] {ApplicationConfig.class};
+        return new Class[] {ServletConfig.class};
     }
 
     @Override
