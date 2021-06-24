@@ -5,6 +5,6 @@ CREATE TABLE IF NOT EXISTS gifts.gift_certificate
     description TEXT NOT NULL,
     price DECIMAL NOT NULL,
     duration INTEGER NOT NULL,
-    create_date DATE NOT NULL,
-    last_update_date date NOT NULL
+    create_date timestamp NOT NULL,
+    last_update_date timestamp NOT NULL
 );
