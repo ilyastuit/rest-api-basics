@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS gifts.gift_certificate
 (
-    id  SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     name varchar(100) NOT NULL,
     description TEXT NOT NULL,
     price DECIMAL NOT NULL,
