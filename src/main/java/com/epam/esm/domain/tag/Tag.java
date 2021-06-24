@@ -2,6 +2,7 @@ package com.epam.esm.domain.tag;
 
 import com.epam.esm.domain.giftcertificate.GiftCertificate;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -9,6 +10,13 @@ public class Tag {
     private int id;
     private String name;
     private Set<GiftCertificate> certificates;
+
+    public Tag() {
+    }
+
+    public Tag(int id) {
+        this.id = id;
+    }
 
     public Tag(int id, String name, Set<GiftCertificate> certificates) {
         this.id = id;
@@ -33,6 +41,9 @@ public class Tag {
     }
 
     public void addCertificate(GiftCertificate certificate) {
+        if (this.certificates == null) {
+            this.certificates = new HashSet<>();
+        }
         this.certificates.add(certificate);
     }
 
