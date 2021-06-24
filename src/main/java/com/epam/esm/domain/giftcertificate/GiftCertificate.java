@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -98,6 +99,9 @@ public class GiftCertificate {
     }
 
     public void addTag(Tag tag) {
+        if (this.tags == null) {
+            this.tags = new HashSet<>();
+        }
         this.tags.add(tag);
     }
 

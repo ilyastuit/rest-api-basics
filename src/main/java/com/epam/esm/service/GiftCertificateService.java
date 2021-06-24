@@ -9,17 +9,17 @@ import java.util.List;
 
 @Service
 public class GiftCertificateService {
-    private final GiftCertificateRepository repository;
+    private final GiftCertificateRepository certificateRepository;
 
-    public GiftCertificateService(GiftCertificateRepository repository) {
-        this.repository = repository;
+    public GiftCertificateService(GiftCertificateRepository certificateRepository) {
+        this.certificateRepository = certificateRepository;
     }
 
     public GiftCertificate getOne(int id) throws NotFoundException {
-        return repository.findOne(id).stream().findAny().orElseThrow(() -> new NotFoundException("GiftCertificate not found (id = "+ id +")"));
+        return certificateRepository.findOne(id).stream().findAny().orElseThrow(() -> new NotFoundException("GiftCertificate is not found (id = " + id + ")"));
     }
 
     public List<GiftCertificate> getAll() {
-        return repository.findAll();
+        return certificateRepository.findAll();
     }
 }
