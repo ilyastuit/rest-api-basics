@@ -1,17 +1,17 @@
 INSERT INTO gifts.gift_certificate (id, name, description, price, duration, create_date, last_update_date)
-VALUES (1, 'Android Development', 'Android Development', 200.21, 1000, '2021-06-24T11:48:23', '2021-06-25T23:48:23');
+VALUES (1, 'Android Development', 'Android Development', 200.21, 1000, '2021-06-24 11:48:23', '2021-06-25 23:48:23');
 
 INSERT INTO gifts.gift_certificate (id, name, description, price, duration, create_date, last_update_date)
-VALUES (2, 'IOS Development', 'IOS Development', 400.21, 1000, '2021-01-24T11:48:23', '2021-03-10T10:48:23');
+VALUES (2, 'IOS Development', 'IOS Development', 400.21, 1000, '2021-01-24 11:48:23', '2021-03-10 10:48:23');
 
 INSERT INTO gifts.gift_certificate (id, name, description, price, duration, create_date, last_update_date)
-VALUES (3, 'Java Backend Development', 'Java Backend Development', 300.21, 340, '2020-07-24T16:48:23', '2021-05-10T14:48:23');
+VALUES (3, 'Java Backend Development', 'Java Backend Development', 300.21, 340, '2020-07-24 16:48:23', '2021-05-10 14:48:23');
 
 INSERT INTO gifts.gift_certificate (id, name, description, price, duration, create_date, last_update_date)
-VALUES (4, 'Python Backend Development', 'Python Backend Development', 300.21, 400, '2021-02-09T16:48:23', '2021-04-01T08:48:23');
+VALUES (4, 'Python Backend Development', 'Python Backend Development', 300.21, 400, '2021-02-09 16:48:23', '2021-04-01 08:48:23');
 
 INSERT INTO gifts.gift_certificate (id, name, description, price, duration, create_date, last_update_date)
-VALUES (5, 'English courses', 'English courses', 1500.00, 2000, '2020-10-09T10:48:23', '2021-02-01T08:48:23');
+VALUES (5, 'English courses', 'English courses', 1500.00, 2000, '2020-10-09 10:48:23', '2021-02-01 08:48:23');
 
 INSERT INTO gifts.tag (id, name) VALUES (1, 'android');
 INSERT INTO gifts.tag (id, name) VALUES (2, 'ios');
