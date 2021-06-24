@@ -6,6 +6,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan("com.epam.esm.api.*")
+@ComponentScan("com.epam.esm.*")
 public class ServletConfig {
 }

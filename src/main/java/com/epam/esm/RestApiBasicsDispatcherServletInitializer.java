@@ -14,9 +14,7 @@ public class RestApiBasicsDispatcherServletInitializer extends AbstractAnnotatio
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
-        rootContext.register(ServletConfig.class);
-        rootContext.register(DataSourceConfig.class);
-        rootContext.register(PropertyConfig.class);
+        rootContext.scan("com.epam.esm.*");
         super.onStartup(servletContext);
     }
 
