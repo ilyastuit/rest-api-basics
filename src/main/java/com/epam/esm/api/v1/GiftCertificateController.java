@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-@RequestMapping("/gift-certificates")
+@RequestMapping("api/v1/gift-certificates")
 public class GiftCertificateController {
 
     private final GiftCertificateService giftCertificateService;
@@ -39,7 +39,7 @@ public class GiftCertificateController {
     }
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Object create(@RequestBody GiftCertificate giftCertificate) {
+    public ResponseEntity<?> create(@RequestBody GiftCertificate giftCertificate) {
 
         final DataBinder dataBinder = new DataBinder(giftCertificate);
         dataBinder.addValidators(this.giftCertificateValidator);
@@ -56,7 +56,7 @@ public class GiftCertificateController {
             }
 
             GiftCertificateApiErrors result = new GiftCertificateApiErrors(HttpStatus.BAD_REQUEST, GiftCertificateApiErrors.DEFAULT_ERROR_MESSAGE, errors);
-            return new ResponseEntity<Object>(result, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseEntity<>(giftCertificate, HttpStatus.OK);

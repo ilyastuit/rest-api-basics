@@ -1,30 +1,24 @@
 package com.epam.esm.domain.tag;
 
-import com.epam.esm.domain.giftcertificate.GiftCertificate;
-
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 public class Tag {
-    private int id;
+    private Integer id;
     private String name;
-    private Set<GiftCertificate> certificates;
 
     public Tag() {
     }
 
-    public Tag(int id) {
+    public Tag(Integer id) {
         this.id = id;
     }
 
-    public Tag(int id, String name, Set<GiftCertificate> certificates) {
+    public Tag(Integer id, String name) {
         this.id = id;
         this.name = name;
-        this.certificates = certificates;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -36,28 +30,17 @@ public class Tag {
         this.name = name;
     }
 
-    public Set<GiftCertificate> getCertificates() {
-        return certificates;
-    }
-
-    public void addCertificate(GiftCertificate certificate) {
-        if (this.certificates == null) {
-            this.certificates = new HashSet<>();
-        }
-        this.certificates.add(certificate);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Tag tag = (Tag) o;
-        return id == tag.id && name.equals(tag.name) && Objects.equals(certificates, tag.certificates);
+        return id.equals(tag.id) && name.equals(tag.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, certificates);
+        return Objects.hash(id, name);
     }
 
     @Override
@@ -65,7 +48,6 @@ public class Tag {
         return "Tag{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", certificates=" + certificates +
                 '}';
     }
 }

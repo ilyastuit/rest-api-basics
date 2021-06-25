@@ -17,10 +17,10 @@ public class TagRepository {
     }
 
     public List<Tag> findOne(int id) {
-        return jdbcTemplate.query("SELECT t.id, t.name, gc.id, gc.name, gc.description, gc.price, gc.duration, gc.create_date, gc.last_update_date FROM gifts.tag t LEFT JOIN gifts.gift_certificate_tag gct ON gct.tag_id = t.id LEFT JOIN gifts.gift_certificate gc ON gct.gift_certificate_id = gc.id WHERE t.id=?", new TagResultSetExtractor(), id);
+        return jdbcTemplate.query("SELECT t.id, t.name FROM gifts.tag t WHERE t.id=?", new TagResultSetExtractor(), id);
     }
 
     public List<Tag> findAll() {
-        return jdbcTemplate.query("SELECT t.id, t.name, gc.id, gc.name, gc.description, gc.price, gc.duration, gc.create_date, gc.last_update_date FROM gifts.tag t LEFT JOIN gifts.gift_certificate_tag gct ON gct.tag_id = t.id LEFT JOIN gifts.gift_certificate gc ON gct.gift_certificate_id = gc.id", new TagResultSetExtractor());
+        return jdbcTemplate.query("SELECT t.id, t.name FROM gifts.tag t", new TagResultSetExtractor());
     }
 }

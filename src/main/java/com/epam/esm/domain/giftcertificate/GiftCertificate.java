@@ -3,6 +3,7 @@ package com.epam.esm.domain.giftcertificate;
 import com.epam.esm.domain.tag.Tag;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -16,7 +17,7 @@ public class GiftCertificate {
     private String name;
     private String description;
     private BigDecimal price;
-    private int duration;
+    private Integer duration;
 
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -26,6 +27,7 @@ public class GiftCertificate {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime lastUpdateDate;
 
+    @JsonDeserialize(as=HashSet.class, contentAs=Tag.class)
     private Set<Tag> tags;
 
     public GiftCertificate() {
@@ -35,7 +37,7 @@ public class GiftCertificate {
         this.id = id;
     }
 
-    public GiftCertificate(String name, String description, BigDecimal price, int duration, LocalDateTime createDate, LocalDateTime lastUpdateDate, Set<Tag> tags) {
+    public GiftCertificate(String name, String description, BigDecimal price, Integer duration, LocalDateTime createDate, LocalDateTime lastUpdateDate, Set<Tag> tags) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -73,11 +75,11 @@ public class GiftCertificate {
         this.price = price;
     }
 
-    public int getDuration() {
+    public Integer getDuration() {
         return duration;
     }
 
-    public void setDuration(int duration) {
+    public void setDuration(Integer duration) {
         this.duration = duration;
     }
 
@@ -121,7 +123,7 @@ public class GiftCertificate {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         GiftCertificate that = (GiftCertificate) o;
-        return id == that.id && duration == that.duration && name.equals(that.name) && description.equals(that.description) && price.equals(that.price) && createDate.equals(that.createDate) && lastUpdateDate.equals(that.lastUpdateDate) && Objects.equals(tags, that.tags);
+        return id.equals(that.id) && duration == that.duration && name.equals(that.name) && description.equals(that.description) && price.equals(that.price) && createDate.equals(that.createDate) && lastUpdateDate.equals(that.lastUpdateDate) && Objects.equals(tags, that.tags);
     }
 
     @Override
