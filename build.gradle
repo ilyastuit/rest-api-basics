@@ -46,7 +46,7 @@ war {
 
 flyway {
     driver = props.getProperty("datasource.driver")
-    url = props.getProperty("datasource.url")
+    url = 'jdbc:postgresql://localhost:54321/rest'
     user = props.getProperty("datasource.username")
     password = props.getProperty("datasource.password")
 
