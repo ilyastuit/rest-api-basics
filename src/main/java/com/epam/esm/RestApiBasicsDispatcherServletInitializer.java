@@ -1,7 +1,5 @@
 package com.epam.esm;
 
-import com.epam.esm.config.DataSourceConfig;
-import com.epam.esm.config.PropertyConfig;
 import com.epam.esm.config.ServletConfig;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
