@@ -2,6 +2,7 @@ package com.epam.esm.domain.giftcertificate;
 
 import com.epam.esm.domain.tag.Tag;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -10,16 +11,19 @@ import java.util.Objects;
 import java.util.Set;
 
 public class GiftCertificate {
-    private int id;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Integer id;
     private String name;
     private String description;
     private BigDecimal price;
     private int duration;
 
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime createDate;
 
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime lastUpdateDate;
 
     private Set<Tag> tags;
@@ -31,18 +35,17 @@ public class GiftCertificate {
         this.id = id;
     }
 
-    public GiftCertificate(int id, String name, String description, BigDecimal price, int duration, LocalDateTime createDate, LocalDateTime lastUpdateDate, Set<Tag> tags) {
-        this.id = id;
+    public GiftCertificate(String name, String description, BigDecimal price, int duration, LocalDateTime createDate, LocalDateTime lastUpdateDate, Set<Tag> tags) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.duration = duration;
-        this.createDate = createDate;
-        this.lastUpdateDate = lastUpdateDate;
+        this.setCreateDate(createDate);
+        this.setLastUpdateDate(lastUpdateDate);
         this.tags = tags;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -83,7 +86,11 @@ public class GiftCertificate {
     }
 
     public void setCreateDate(LocalDateTime createDate) {
-        this.createDate = createDate;
+        if (createDate == null) {
+            this.createDate = LocalDateTime.now();
+        } else {
+            this.createDate = createDate;
+        }
     }
 
     public LocalDateTime getLastUpdateDate() {
@@ -91,7 +98,11 @@ public class GiftCertificate {
     }
 
     public void setLastUpdateDate(LocalDateTime lastUpdateDate) {
-        this.lastUpdateDate = lastUpdateDate;
+        if (lastUpdateDate == null) {
+            this.lastUpdateDate = LocalDateTime.now();
+        } else {
+            this.lastUpdateDate = lastUpdateDate;
+        }
     }
 
     public Set<Tag> getTags() {
