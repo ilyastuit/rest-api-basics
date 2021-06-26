@@ -11,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Rest Api Controller for Tags.
+ */
 @RestController
 @RequestMapping("/api/v1/tags")
 public class TagController {
@@ -23,11 +26,22 @@ public class TagController {
         this.tagValidator = tagValidator;
     }
 
+    /**
+     * Get list of all Tags.
+     *
+     * @return List<Tag>
+     */
     @GetMapping("/")
     public ResponseEntity<?> all() {
         return new ResponseEntity<>(this.tagService.getAll(), HttpStatus.OK);
     }
 
+    /**
+     * Get Tag by id.
+     *
+     * @param id Id of Tag
+     * @return Tag
+     */
     @GetMapping("/{id}")
     public ResponseEntity<?> one(@PathVariable("id") int id) {
         try {
@@ -37,6 +51,13 @@ public class TagController {
         }
     }
 
+    /**
+     * Create new Tag.
+     * Values should pass validation otherwise Bad Request will be returned.
+     *
+     * @param tag Tag values
+     * @return int
+     */
     @PostMapping("/")
     public ResponseEntity<?> create(@RequestBody Tag tag) {
         final BindingResult bindingResult = ValidatorUtil.validate(tag, this.tagValidator);
@@ -49,6 +70,12 @@ public class TagController {
         return new ResponseEntity<>(this.tagService.save(tag), HttpStatus.CREATED);
     }
 
+    /**
+     * Delete Tag by id.
+     *
+     * @param id Id of Tag
+     * @return null
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") int id) {
         this.tagService.deleteById(id);

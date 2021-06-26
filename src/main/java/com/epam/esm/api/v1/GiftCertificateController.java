@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
+/**
+ * Rest Api Controller for GiftCertificate.
+ */
 @RestController
 @RequestMapping("/api/v1/gift-certificates")
 public class GiftCertificateController {
@@ -25,7 +28,16 @@ public class GiftCertificateController {
         this.giftCertificateValidator = giftCertificateValidator;
     }
 
-    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    /**
+     *  Get list of all gift certificates (optional: with Tags).
+     *  Sort by date, name or with both of them.
+     *
+     * @param tags Include tags (true|false)
+     * @param date Sort by date (asc|desc)
+     * @param name Sort by name (asc|desc)
+     * @return List<GiftCertificate>
+     */
+    @GetMapping(value = "/")
     public ResponseEntity<?> all(@RequestParam("tags") Optional<String> tags,
                                  @RequestParam("date") Optional<String> date,
                                  @RequestParam("name") Optional<String> name) {
@@ -33,7 +45,14 @@ public class GiftCertificateController {
         return new ResponseEntity<>(this.giftCertificateService.getAll(tags, date, name), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    /**
+     * Get Gift Certificate by id (optional: with tags).
+     *
+     * @param id id of the GiftCertificate
+     * @param tags Include Tags (true|false)
+     * @return GiftCertificate
+     */
+    @GetMapping(value = "/{id}")
     public ResponseEntity<?> one(@PathVariable("id") int id, @RequestParam("tags") Optional<String> tags) {
         boolean withTags = ValidatorUtil.isValidBoolean(tags);
 
@@ -44,7 +63,18 @@ public class GiftCertificateController {
         }
     }
 
-    @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+    /**
+     * Search GiftCertificates matching by name or description.
+     * Search GiftCertificates matching by Tag name.
+     * Sort by date, name or with both of them.
+     *
+     * @param q Search parameter
+     * @param tag Tag name
+     * @param date Sort by date (asc|desc)
+     * @param name Sort by name (asc|desc)
+     * @return List<GiftCertificate>
+     */
+    @GetMapping(value = "/search")
     public ResponseEntity<?> search(@RequestParam("q") Optional<String> q,
                                     @RequestParam("tag") Optional<String> tag,
                                     @RequestParam("date") Optional<String> date,
@@ -57,7 +87,14 @@ public class GiftCertificateController {
         return new ResponseEntity<>("Please provide the search parameter <q> or <tag>", HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
+    /**
+     * Create new GiftCertificate.
+     * Values should pass validation otherwise Bad Request will be returned.
+     *
+     * @param giftCertificate Request body representation of GiftCertificate
+     * @return int
+     */
+    @PostMapping(value = "/create")
     public ResponseEntity<?> create(@RequestBody GiftCertificate giftCertificate) {
 
         final BindingResult bindingResult = ValidatorUtil.validate(giftCertificate, this.giftCertificateValidator);
@@ -70,7 +107,15 @@ public class GiftCertificateController {
         return new ResponseEntity<>(this.giftCertificateService.save(giftCertificate), HttpStatus.CREATED);
     }
 
-    @PatchMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    /**
+     * Update GiftCertificate by id.
+     * Values should pass validation otherwise Bad Request will be returned.
+     *
+     * @param id Id of GiftCertificate to update.
+     * @param giftCertificate GiftCertificate values.
+     * @return GiftCertificate
+     */
+    @PatchMapping(value = "/{id}")
     public ResponseEntity<?> update(@PathVariable("id") int id, @RequestBody GiftCertificate giftCertificate) {
 
         if (!this.giftCertificateService.isExistById(id)) {
@@ -93,6 +138,12 @@ public class GiftCertificateController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    /**
+     * Delete GiftCertificate by id.
+     *
+     * @param id Id of GiftCertificate to delete
+     * @return null
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") int id) {
         this.giftCertificateService.delete(id);
