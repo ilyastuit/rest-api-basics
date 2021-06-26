@@ -10,20 +10,22 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
-import java.util.Set;
 
 @Repository
 public class GiftCertificateRepository {
 
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final TransactionTemplate transactionTemplate;
     private final TagRepository tagRepository;
 
-    public GiftCertificateRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate, TagRepository tagRepository) {
+    public GiftCertificateRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate, TransactionTemplate transactionTemplate, TagRepository tagRepository) {
         this.jdbcTemplate = jdbcTemplate;
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+        this.transactionTemplate = transactionTemplate;
         this.tagRepository = tagRepository;
     }
 
@@ -135,7 +137,10 @@ public class GiftCertificateRepository {
 
     private int updateQuery(MapSqlParameterSource params, String SQL) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        this.namedParameterJdbcTemplate.update(SQL, params, keyHolder, new String[] {"id"});
+        transactionTemplate.execute(status -> {
+            namedParameterJdbcTemplate.update(SQL, params, keyHolder, new String[] {"id"});
+            return null;
+        });
         int certificateId = keyHolder.getKey().intValue();
         updateTags(params, certificateId);
 
@@ -144,7 +149,7 @@ public class GiftCertificateRepository {
 
     private void updateTags(MapSqlParameterSource params, int certificateId) {
         try {
-            Set<Tag> tags = (Set<Tag>) params.getValue("tags");
+            List<Tag> tags = (List<Tag>) params.getValue("tags");
             for (Tag tag: tags) {
                 int tagId;
                 if (!this.tagRepository.isNameExist(tag.getName())) {

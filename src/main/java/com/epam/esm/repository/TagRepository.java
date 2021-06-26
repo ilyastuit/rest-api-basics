@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 
@@ -17,10 +18,12 @@ public class TagRepository {
 
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final TransactionTemplate transactionTemplate;
 
-    public TagRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate, JdbcTemplate jdbcTemplate) {
+    public TagRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate, JdbcTemplate jdbcTemplate, TransactionTemplate transactionTemplate) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         this.jdbcTemplate = jdbcTemplate;
+        this.transactionTemplate = transactionTemplate;
     }
 
     public List<Tag> findOne(int id) {
@@ -55,7 +58,10 @@ public class TagRepository {
 
     public void assignTagToGiftCertificate(int certificateId, int tagId) {
         final String SQL = "INSERT INTO gifts.gift_certificate_tag (gift_certificate_id, tag_id) VALUES (?, ?)";
-        jdbcTemplate.update(SQL, certificateId, tagId);
+        transactionTemplate.execute(status -> {
+            jdbcTemplate.update(SQL, certificateId, tagId);
+            return null;
+        });
     }
 
     public List<Tag> getByGiftCertificateId(Integer certificateId) {
@@ -64,9 +70,12 @@ public class TagRepository {
     }
 
     public void deleteById(int id) {
-        String SQL = "DELETE FROM gifts.gift_certificate_tag WHERE tag_id = ?";
-        this.jdbcTemplate.update(SQL, id);
-        SQL = "DELETE FROM gifts.tag WHERE id = ?";
-        this.jdbcTemplate.update(SQL, id);
+        final String firstSql = "DELETE FROM gifts.gift_certificate_tag WHERE tag_id = ?";
+        final String secondSql = "DELETE FROM gifts.tag WHERE id = ?";
+        transactionTemplate.execute(status -> {
+            this.jdbcTemplate.update(firstSql, id);
+            this.jdbcTemplate.update(secondSql, id);
+            return null;
+        });
     }
 }
