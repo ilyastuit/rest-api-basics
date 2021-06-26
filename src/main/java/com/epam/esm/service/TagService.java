@@ -27,4 +27,8 @@ public class TagService {
     public void deleteById(int id) {
         this.repository.deleteById(id);
     }
+
+    public int save(Tag tag) {
+        return this.repository.save(tag);
+    }
 }
