@@ -9,18 +9,18 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 
 @Service
-public class TagApiErrorsSerializer  extends StdSerializer<TagApiErrors> {
+public class TagApiErrorsSerializer  extends StdSerializer<TagValidationErrors> {
 
     public TagApiErrorsSerializer() {
         this(null);
     }
 
-    public TagApiErrorsSerializer(Class<TagApiErrors> t) {
+    public TagApiErrorsSerializer(Class<TagValidationErrors> t) {
         super(t);
     }
 
     @Override
-    public void serialize(TagApiErrors apiErrors, JsonGenerator jgen, SerializerProvider provider) throws IOException {
+    public void serialize(TagValidationErrors apiErrors, JsonGenerator jgen, SerializerProvider provider) throws IOException {
         ValidatorUtil.apiSerialize(apiErrors, jgen);
     }
 }

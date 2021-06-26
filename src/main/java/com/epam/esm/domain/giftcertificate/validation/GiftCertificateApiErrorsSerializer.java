@@ -9,18 +9,18 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 
 @Service
-public class GiftCertificateApiErrorsSerializer extends StdSerializer<GiftCertificateApiErrors> {
+public class GiftCertificateApiErrorsSerializer extends StdSerializer<GiftCertificateValidationErrors> {
 
     public GiftCertificateApiErrorsSerializer() {
         this(null);
     }
 
-    public GiftCertificateApiErrorsSerializer(Class<GiftCertificateApiErrors> t) {
+    public GiftCertificateApiErrorsSerializer(Class<GiftCertificateValidationErrors> t) {
         super(t);
     }
 
     @Override
-    public void serialize(GiftCertificateApiErrors apiErrors, JsonGenerator jgen, SerializerProvider provider) throws IOException {
+    public void serialize(GiftCertificateValidationErrors apiErrors, JsonGenerator jgen, SerializerProvider provider) throws IOException {
         ValidatorUtil.apiSerialize(apiErrors, jgen);
     }
 }

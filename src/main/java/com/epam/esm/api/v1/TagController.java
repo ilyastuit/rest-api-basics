@@ -1,7 +1,7 @@
 package com.epam.esm.api.v1;
 
 import com.epam.esm.domain.tag.Tag;
-import com.epam.esm.domain.tag.validation.TagApiErrors;
+import com.epam.esm.domain.tag.validation.TagValidationErrors;
 import com.epam.esm.domain.tag.validation.TagValidator;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.ValidatorUtil;
@@ -63,7 +63,7 @@ public class TagController {
         final BindingResult bindingResult = ValidatorUtil.validate(tag, this.tagValidator);
 
         if (bindingResult.hasErrors()) {
-            TagApiErrors result = new TagApiErrors(HttpStatus.BAD_REQUEST, TagApiErrors.DEFAULT_ERROR_MESSAGE, ValidatorUtil.getErrors(bindingResult));
+            TagValidationErrors result = new TagValidationErrors(HttpStatus.BAD_REQUEST, TagValidationErrors.DEFAULT_ERROR_MESSAGE, ValidatorUtil.getErrors(bindingResult));
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
 

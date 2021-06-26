@@ -1,6 +1,6 @@
 package com.epam.esm.service;
 
-import com.epam.esm.domain.ApiErrors;
+import com.epam.esm.domain.ValidationErrors;
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.springframework.validation.*;
 
@@ -42,16 +42,16 @@ public class ValidatorUtil {
         return errors;
     }
 
-    public static void apiSerialize(ApiErrors apiErrors, JsonGenerator jgen) throws IOException {
+    public static void apiSerialize(ValidationErrors validationErrors, JsonGenerator jgen) throws IOException {
         jgen.writeStartObject();
-        jgen.writeNumberField("status", apiErrors.getStatus().value());
-        jgen.writeStringField("errorMessage", apiErrors.getMessage());
+        jgen.writeNumberField("status", validationErrors.getStatus().value());
+        jgen.writeStringField("errorMessage", validationErrors.getMessage());
 
         jgen.writeFieldName("errors");
         jgen.writeStartArray();
         jgen.writeStartObject();
 
-        Map<String, String> data = apiErrors.getErrors();
+        Map<String, String> data = validationErrors.getErrors();
 
         for (Map.Entry<String, String> error: data.entrySet()) {
             jgen.writeStringField(error.getKey(), error.getValue());

@@ -1,12 +1,11 @@
 package com.epam.esm.api.v1;
 
 import com.epam.esm.domain.giftcertificate.GiftCertificate;
-import com.epam.esm.domain.giftcertificate.validation.GiftCertificateApiErrors;
+import com.epam.esm.domain.giftcertificate.validation.GiftCertificateValidationErrors;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.ValidatorUtil;
 import com.epam.esm.service.exceptions.NotFoundException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.*;
 import org.springframework.web.bind.annotation.*;
@@ -100,7 +99,7 @@ public class GiftCertificateController {
         final BindingResult bindingResult = ValidatorUtil.validate(giftCertificate, this.giftCertificateValidator);
 
         if (bindingResult.hasErrors()) {
-            GiftCertificateApiErrors result = new GiftCertificateApiErrors(HttpStatus.BAD_REQUEST, GiftCertificateApiErrors.DEFAULT_ERROR_MESSAGE, ValidatorUtil.getErrors(bindingResult));
+            GiftCertificateValidationErrors result = new GiftCertificateValidationErrors(HttpStatus.BAD_REQUEST, GiftCertificateValidationErrors.DEFAULT_ERROR_MESSAGE, ValidatorUtil.getErrors(bindingResult));
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
 
@@ -125,7 +124,7 @@ public class GiftCertificateController {
         final BindingResult bindingResult = ValidatorUtil.validate(giftCertificate, this.giftCertificateValidator);
 
         if (bindingResult.hasErrors()) {
-            GiftCertificateApiErrors result = new GiftCertificateApiErrors(HttpStatus.BAD_REQUEST, GiftCertificateApiErrors.DEFAULT_ERROR_MESSAGE, ValidatorUtil.getErrors(bindingResult));
+            GiftCertificateValidationErrors result = new GiftCertificateValidationErrors(HttpStatus.BAD_REQUEST, GiftCertificateValidationErrors.DEFAULT_ERROR_MESSAGE, ValidatorUtil.getErrors(bindingResult));
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
 

@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import java.io.Serializable;
 import java.util.Map;
 
-public interface ApiErrors extends Serializable {
+public interface ValidationErrors extends Serializable {
 
     String DEFAULT_ERROR_MESSAGE = "Validation failed.";
 
