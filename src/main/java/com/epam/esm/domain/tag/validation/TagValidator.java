@@ -9,6 +9,7 @@ import org.springframework.validation.Validator;
 @Service
 public class TagValidator implements Validator {
 
+    private boolean fromGiftCertificate = false;
     private final TagRepository tagRepository;
 
     public TagValidator(TagRepository tagRepository) {
@@ -27,8 +28,13 @@ public class TagValidator implements Validator {
             errors.rejectValue("name", "name.required", "Name is required and should not be empty.");
         }
 
-        if (tagRepository.isNameExist(tag.getName())) {
+        if (!this.fromGiftCertificate && tagRepository.isNameExist(tag.getName())) {
             errors.rejectValue("name", "name.unique", "Tag with this name is already exist.");
         }
+    }
+
+    public TagValidator fromGiftCertificate() {
+        this.fromGiftCertificate = true;
+        return this;
     }
 }

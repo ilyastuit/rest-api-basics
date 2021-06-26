@@ -2,6 +2,7 @@ package com.epam.esm.domain.giftcertificate.validation;
 
 import com.epam.esm.domain.giftcertificate.GiftCertificate;
 import com.epam.esm.domain.tag.Tag;
+import com.epam.esm.domain.tag.validation.TagValidator;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
@@ -16,9 +17,9 @@ import java.util.Set;
 public class GiftCertificateValidator implements Validator {
 
     @Qualifier("tagValidator")
-    private final Validator tagValidator;
+    private final TagValidator tagValidator;
 
-    public GiftCertificateValidator(Validator tagValidator) {
+    public GiftCertificateValidator(TagValidator tagValidator) {
         this.tagValidator = tagValidator;
     }
 
@@ -46,7 +47,7 @@ public class GiftCertificateValidator implements Validator {
             for(Tag tag : giftCertificate.getTags()) {
                 try {
                     errors.pushNestedPath("tags["+ i++ +"]");
-                    ValidationUtils.invokeValidator(this.tagValidator, tag, errors);
+                    ValidationUtils.invokeValidator(this.tagValidator.fromGiftCertificate(), tag, errors);
                 } finally {
                     errors.popNestedPath();
                 }
