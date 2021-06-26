@@ -54,7 +54,7 @@ public class GiftCertificateController {
         } else if(tag.isPresent()) {
             return new ResponseEntity<>(this.giftCertificateService.getAllByTagName(tag.get()), HttpStatus.OK);
         }
-        return new ResponseEntity<>("Please provide the search parameter <q>", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Please provide the search parameter <q> or <tag>", HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
