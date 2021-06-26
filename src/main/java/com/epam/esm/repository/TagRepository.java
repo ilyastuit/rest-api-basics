@@ -10,7 +10,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.List;
 
 @Repository
 public class TagRepository {
@@ -53,10 +53,7 @@ public class TagRepository {
         jdbcTemplate.update("INSERT INTO gifts.gift_certificate_tag (gift_certificate_id, tag_id) VALUES (?, ?)", certificateId, tagId);
     }
 
-    public Set<Tag> getByGiftCertificateId(Integer certificateId) {
-        List<Tag> list = this.jdbcTemplate.query("SELECT t.id, t.name FROM gifts.tag t LEFT JOIN gifts.gift_certificate_tag gct ON gct.tag_id = t.id LEFT JOIN gifts.gift_certificate gc ON gct.gift_certificate_id = gc.id WHERE gc.id = ?", new TagResultSetExtractor(), certificateId);
-        Set<Tag> set = new TreeSet<>(Comparator.comparing(Tag::getId));
-        set.addAll(list);
-        return set;
+    public List<Tag> getByGiftCertificateId(Integer certificateId) {
+        return this.jdbcTemplate.query("SELECT t.id, t.name FROM gifts.tag t LEFT JOIN gifts.gift_certificate_tag gct ON gct.tag_id = t.id LEFT JOIN gifts.gift_certificate gc ON gct.gift_certificate_id = gc.id WHERE gc.id = ?", new TagResultSetExtractor(), certificateId);
     }
 }

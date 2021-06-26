@@ -7,9 +7,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 public class GiftCertificate {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -27,8 +27,8 @@ public class GiftCertificate {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime lastUpdateDate;
 
-    @JsonDeserialize(as=HashSet.class, contentAs=Tag.class)
-    private Set<Tag> tags;
+    @JsonDeserialize(as= ArrayList.class, contentAs=Tag.class)
+    private List<Tag> tags;
 
     public GiftCertificate() {
     }
@@ -37,7 +37,7 @@ public class GiftCertificate {
         this.id = id;
     }
 
-    public GiftCertificate(String name, String description, BigDecimal price, Integer duration, LocalDateTime createDate, LocalDateTime lastUpdateDate, Set<Tag> tags) {
+    public GiftCertificate(String name, String description, BigDecimal price, Integer duration, LocalDateTime createDate, LocalDateTime lastUpdateDate, List<Tag> tags) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -107,17 +107,17 @@ public class GiftCertificate {
         }
     }
 
-    public Set<Tag> getTags() {
+    public List<Tag> getTags() {
         return tags;
     }
 
-    public void setTags(Set<Tag> tags) {
+    public void setTags(List<Tag> tags) {
         this.tags = tags;
     }
 
     public void addTag(Tag tag) {
         if (this.tags == null) {
-            this.tags = new HashSet<>();
+            this.tags = new ArrayList<>();
         }
         this.tags.add(tag);
     }
