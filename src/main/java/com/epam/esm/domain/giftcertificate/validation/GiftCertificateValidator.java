@@ -41,7 +41,7 @@ public class GiftCertificateValidator implements Validator {
             errors.rejectValue("duration", "duration.required", "Duration is required and should be greater than zero.");
         }
 
-        if (!giftCertificate.getTags().isEmpty()) {
+        if (giftCertificate.getTags() != null && !giftCertificate.getTags().isEmpty()) {
             int i = 0;
             for(Tag tag : giftCertificate.getTags()) {
                 try {
