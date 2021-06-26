@@ -12,6 +12,10 @@ def springVersion = '5.3.8'
 def props = new Properties()
 file("./src/main/resources/application.properties").withInputStream { props.load(it) }
 
+if (props.getProperty("spring.profiles.active") == "dev") {
+    file("./src/main/resources/application-dev.properties").withInputStream { props.load(it) }
+}
+
 repositories {
     mavenCentral()
 }
@@ -29,7 +33,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.9.3'
     implementation 'org.postgresql:postgresql:42.2.22'
 
-    compile "org.flywaydb:flyway-core:7.10.0"
+    compileOnly "org.flywaydb:flyway-core:7.10.0"
 
     testImplementation 'junit:junit:4.11'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
