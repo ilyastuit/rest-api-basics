@@ -37,3 +37,7 @@ INSERT INTO gifts.gift_certificate_tag (id, gift_certificate_id, tag_id) VALUES 
 INSERT INTO gifts.gift_certificate_tag (id, gift_certificate_id, tag_id) VALUES (12, 4, 7);
 INSERT INTO gifts.gift_certificate_tag (id, gift_certificate_id, tag_id) VALUES (13, 5, 8);
 INSERT INTO gifts.gift_certificate_tag (id, gift_certificate_id, tag_id) VALUES (14, 5, 9);
+
+ALTER SEQUENCE gifts.gift_certificate_id_seq RESTART WITH 6;
+ALTER SEQUENCE gifts.tag_id_seq RESTART WITH 10;
+ALTER SEQUENCE gifts.gift_certificate_tag_id_seq RESTART WITH 15;
