@@ -28,13 +28,13 @@ public class GiftCertificateController {
     }
 
     /**
-     *  Get list of all gift certificates (optional: with Tags).
+     *  Get list of all GiftCertificates (optional: with Tags).
      *  Sort by date, name or with both of them.
      *
      * @param tags Include tags (true|false)
      * @param date Sort by date (asc|desc)
      * @param name Sort by name (asc|desc)
-     * @return List<GiftCertificate>
+     * @return List of all GiftCertificates.
      */
     @GetMapping(value = "/")
     public ResponseEntity<?> all(@RequestParam("tags") Optional<String> tags,
@@ -49,7 +49,7 @@ public class GiftCertificateController {
      *
      * @param id id of the GiftCertificate
      * @param tags Include Tags (true|false)
-     * @return GiftCertificate
+     * @return One GiftCertificate or Not Found if not.
      */
     @GetMapping(value = "/{id}")
     public ResponseEntity<?> one(@PathVariable("id") int id, @RequestParam("tags") Optional<String> tags) {
@@ -71,7 +71,7 @@ public class GiftCertificateController {
      * @param tag Tag name
      * @param date Sort by date (asc|desc)
      * @param name Sort by name (asc|desc)
-     * @return List<GiftCertificate>
+     * @return List of found GiftCertificates.
      */
     @GetMapping(value = "/search")
     public ResponseEntity<?> search(@RequestParam("q") Optional<String> q,
@@ -91,7 +91,7 @@ public class GiftCertificateController {
      * Values should pass validation otherwise Bad Request will be returned.
      *
      * @param giftCertificate Request body representation of GiftCertificate
-     * @return int
+     * @return Id of created GiftCertificate.
      */
     @PostMapping(value = "/create")
     public ResponseEntity<?> create(@RequestBody GiftCertificate giftCertificate) {
@@ -112,7 +112,7 @@ public class GiftCertificateController {
      *
      * @param id Id of GiftCertificate to update.
      * @param giftCertificate GiftCertificate values.
-     * @return GiftCertificate
+     * @return Id of updated GiftCertificate.
      */
     @PatchMapping(value = "/{id}")
     public ResponseEntity<?> update(@PathVariable("id") int id, @RequestBody GiftCertificate giftCertificate) {

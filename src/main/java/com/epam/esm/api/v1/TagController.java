@@ -29,7 +29,7 @@ public class TagController {
     /**
      * Get list of all Tags.
      *
-     * @return List<Tag>
+     * @return List of all Tags.
      */
     @GetMapping("/")
     public ResponseEntity<?> all() {
@@ -40,7 +40,7 @@ public class TagController {
      * Get Tag by id.
      *
      * @param id Id of Tag
-     * @return Tag
+     * @return Found Tag by id.
      */
     @GetMapping("/{id}")
     public ResponseEntity<?> one(@PathVariable("id") int id) {
@@ -56,7 +56,7 @@ public class TagController {
      * Values should pass validation otherwise Bad Request will be returned.
      *
      * @param tag Tag values
-     * @return int
+     * @return Id of created Tag.
      */
     @PostMapping("/")
     public ResponseEntity<?> create(@RequestBody Tag tag) {

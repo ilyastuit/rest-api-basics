@@ -14,10 +14,20 @@ public class ValidatorUtil {
     public final static String ASC = "ASC";
     public final static String DESC = "DESC";
 
+    /**
+     * Checks if value can be used for db sorting (asc|desc).
+     * @param value String Optional representation of sort value .
+     * @return boolean.
+     */
     public static boolean isValidSort(Optional<String> value) {
         return value.isPresent() && (ValidatorUtil.ASC.equalsIgnoreCase(value.get()) || ValidatorUtil.DESC.equalsIgnoreCase(value.get()));
     }
 
+    /**
+     * Checks whether value is valid boolean and returns it's value.
+     * @param value String Optional representation of boolean value.
+     * @return boolean.
+     */
     public static boolean isValidBoolean(Optional<String> value) {
         return value.isPresent() && Boolean.parseBoolean(value.get());
     }
