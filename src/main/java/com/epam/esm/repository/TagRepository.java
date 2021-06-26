@@ -33,27 +33,40 @@ public class TagRepository {
 
     public int save(Tag tag) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        this.namedParameterJdbcTemplate.update("INSERT INTO gifts.tag (name) VALUES (:name)", new MapSqlParameterSource().addValue("name",tag.getName()), keyHolder, new String[] {"id"});
+        final String SQL = "INSERT INTO gifts.tag (name) VALUES (:name)";
+        this.namedParameterJdbcTemplate.update(SQL, new MapSqlParameterSource().addValue("name",tag.getName()), keyHolder, new String[] {"id"});
         return keyHolder.getKey() != null ? keyHolder.getKey().intValue() : 0;
     }
 
     public boolean isNameExist(String name) {
-        return this.jdbcTemplate.query("SELECT t.id, t.name FROM gifts.tag t WHERE t.name = ?", new TagResultSetExtractor(), name).stream().findAny().orElse(null) != null;
+        final String SQL = "SELECT t.id, t.name FROM gifts.tag t WHERE t.name = ?";
+        return this.jdbcTemplate.query(SQL, new TagResultSetExtractor(), name).stream().findAny().orElse(null) != null;
     }
 
     public Tag getByName(String name) {
-        return this.jdbcTemplate.query("SELECT t.id, t.name FROM gifts.tag t WHERE t.name = ?", new TagResultSetExtractor(), name).stream().findAny().orElse(null);
+        final String SQL = "SELECT t.id, t.name FROM gifts.tag t WHERE t.name = ?";
+        return this.jdbcTemplate.query(SQL, new TagResultSetExtractor(), name).stream().findAny().orElse(null);
     }
 
     public boolean isTagAlreadyAssignedToGiftCertificate(int certificateId, int tagId) {
-        return this.jdbcTemplate.query("SELECT gct.tag_id as id FROM gifts.gift_certificate_tag gct WHERE gct.gift_certificate_id = ? AND gct.tag_id = ?", new BeanPropertyRowMapper<>(Tag.class), certificateId, tagId).stream().findAny().orElse(null) != null;
+        final String SQL = "SELECT gct.tag_id as id FROM gifts.gift_certificate_tag gct WHERE gct.gift_certificate_id = ? AND gct.tag_id = ?";
+        return this.jdbcTemplate.query(SQL, new BeanPropertyRowMapper<>(Tag.class), certificateId, tagId).stream().findAny().orElse(null) != null;
     }
 
     public void assignTagToGiftCertificate(int certificateId, int tagId) {
-        jdbcTemplate.update("INSERT INTO gifts.gift_certificate_tag (gift_certificate_id, tag_id) VALUES (?, ?)", certificateId, tagId);
+        final String SQL = "INSERT INTO gifts.gift_certificate_tag (gift_certificate_id, tag_id) VALUES (?, ?)";
+        jdbcTemplate.update(SQL, certificateId, tagId);
     }
 
     public List<Tag> getByGiftCertificateId(Integer certificateId) {
-        return this.jdbcTemplate.query("SELECT t.id, t.name FROM gifts.tag t LEFT JOIN gifts.gift_certificate_tag gct ON gct.tag_id = t.id LEFT JOIN gifts.gift_certificate gc ON gct.gift_certificate_id = gc.id WHERE gc.id = ?", new TagResultSetExtractor(), certificateId);
+        final String SQL = "SELECT t.id, t.name FROM gifts.tag t LEFT JOIN gifts.gift_certificate_tag gct ON gct.tag_id = t.id LEFT JOIN gifts.gift_certificate gc ON gct.gift_certificate_id = gc.id WHERE gc.id = ?";
+        return this.jdbcTemplate.query(SQL, new TagResultSetExtractor(), certificateId);
+    }
+
+    public void deleteById(int id) {
+        String SQL = "DELETE FROM gifts.gift_certificate_tag WHERE tag_id = ?";
+        this.jdbcTemplate.update(SQL, id);
+        SQL = "DELETE FROM gifts.tag WHERE id = ?";
+        this.jdbcTemplate.update(SQL, id);
     }
 }
