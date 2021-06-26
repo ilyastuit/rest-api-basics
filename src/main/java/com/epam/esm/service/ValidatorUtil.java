@@ -1,6 +1,6 @@
 package com.epam.esm.service;
 
-import com.epam.esm.domain.ValidationErrors;
+import com.epam.esm.service.error.HttpError;
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.springframework.validation.*;
 
@@ -52,7 +52,7 @@ public class ValidatorUtil {
         return errors;
     }
 
-    public static void apiSerialize(ValidationErrors validationErrors, JsonGenerator jgen) throws IOException {
+    public static void serializeValidationError(HttpError validationErrors, JsonGenerator jgen) throws IOException {
         jgen.writeStartObject();
         jgen.writeNumberField("status", validationErrors.getStatus().value());
         jgen.writeStringField("errorMessage", validationErrors.getMessage());
@@ -70,6 +70,13 @@ public class ValidatorUtil {
         jgen.writeEndObject();
         jgen.writeEndArray();
 
+        jgen.writeEndObject();
+    }
+
+    public static void serializeHttpError(HttpError httpError, JsonGenerator jgen) throws IOException {
+        jgen.writeStartObject();
+        jgen.writeStringField("errorMessage", httpError.getMessage());
+        jgen.writeNumberField("errorCode", Integer.parseInt(httpError.getCode()));
         jgen.writeEndObject();
     }
 }

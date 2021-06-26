@@ -1,6 +1,5 @@
-package com.epam.esm.domain.giftcertificate;
+package com.epam.esm.entity;
 
-import com.epam.esm.domain.tag.Tag;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

@@ -1,4 +1,4 @@
-package com.epam.esm.domain.tag.validation;
+package com.epam.esm.service.tag.validation;
 
 import com.epam.esm.service.ValidatorUtil;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -9,18 +9,18 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 
 @Service
-public class TagApiErrorsSerializer  extends StdSerializer<TagValidationErrors> {
+public class TagValidationErrorsSerializer extends StdSerializer<TagValidationErrors> {
 
-    public TagApiErrorsSerializer() {
+    public TagValidationErrorsSerializer() {
         this(null);
     }
 
-    public TagApiErrorsSerializer(Class<TagValidationErrors> t) {
+    public TagValidationErrorsSerializer(Class<TagValidationErrors> t) {
         super(t);
     }
 
     @Override
     public void serialize(TagValidationErrors apiErrors, JsonGenerator jgen, SerializerProvider provider) throws IOException {
-        ValidatorUtil.apiSerialize(apiErrors, jgen);
+        ValidatorUtil.serializeValidationError(apiErrors, jgen);
     }
 }

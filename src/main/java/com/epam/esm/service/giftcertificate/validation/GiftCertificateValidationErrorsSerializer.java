@@ -1,4 +1,4 @@
-package com.epam.esm.domain.giftcertificate.validation;
+package com.epam.esm.service.giftcertificate.validation;
 
 import com.epam.esm.service.ValidatorUtil;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -9,18 +9,18 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 
 @Service
-public class GiftCertificateApiErrorsSerializer extends StdSerializer<GiftCertificateValidationErrors> {
+public class GiftCertificateValidationErrorsSerializer extends StdSerializer<GiftCertificateValidationErrors> {
 
-    public GiftCertificateApiErrorsSerializer() {
+    public GiftCertificateValidationErrorsSerializer() {
         this(null);
     }
 
-    public GiftCertificateApiErrorsSerializer(Class<GiftCertificateValidationErrors> t) {
+    public GiftCertificateValidationErrorsSerializer(Class<GiftCertificateValidationErrors> t) {
         super(t);
     }
 
     @Override
     public void serialize(GiftCertificateValidationErrors apiErrors, JsonGenerator jgen, SerializerProvider provider) throws IOException {
-        ValidatorUtil.apiSerialize(apiErrors, jgen);
+        ValidatorUtil.serializeValidationError(apiErrors, jgen);
     }
 }

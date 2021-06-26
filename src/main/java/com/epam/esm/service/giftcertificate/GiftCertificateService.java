@@ -1,7 +1,8 @@
-package com.epam.esm.service;
+package com.epam.esm.service.giftcertificate;
 
-import com.epam.esm.domain.giftcertificate.GiftCertificate;
+import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.repository.GiftCertificateRepository;
+import com.epam.esm.service.ValidatorUtil;
 import com.epam.esm.service.exceptions.NotFoundException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Service;

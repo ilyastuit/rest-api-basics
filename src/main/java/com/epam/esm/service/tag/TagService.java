@@ -1,6 +1,6 @@
-package com.epam.esm.service;
+package com.epam.esm.service.tag;
 
-import com.epam.esm.domain.tag.Tag;
+import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
@@ -30,5 +30,9 @@ public class TagService {
 
     public int save(Tag tag) {
         return this.repository.save(tag);
+    }
+
+    public List<Tag> getByGiftCertificateId(Integer certificateId) {
+        return this.repository.getByGiftCertificateId(certificateId);
     }
 }

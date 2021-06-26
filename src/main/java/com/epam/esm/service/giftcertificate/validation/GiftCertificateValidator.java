@@ -1,8 +1,8 @@
-package com.epam.esm.domain.giftcertificate.validation;
+package com.epam.esm.service.giftcertificate.validation;
 
-import com.epam.esm.domain.giftcertificate.GiftCertificate;
-import com.epam.esm.domain.tag.Tag;
-import com.epam.esm.domain.tag.validation.TagValidator;
+import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Tag;
+import com.epam.esm.service.tag.validation.TagValidator;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
@@ -10,8 +10,6 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
 
 @Service
 public class GiftCertificateValidator implements Validator {

@@ -1,9 +1,9 @@
 package com.epam.esm.api.v1;
 
-import com.epam.esm.domain.tag.Tag;
-import com.epam.esm.domain.tag.validation.TagValidationErrors;
-import com.epam.esm.domain.tag.validation.TagValidator;
-import com.epam.esm.service.TagService;
+import com.epam.esm.entity.Tag;
+import com.epam.esm.service.tag.validation.TagValidationErrors;
+import com.epam.esm.service.tag.validation.TagValidator;
+import com.epam.esm.service.tag.TagService;
 import com.epam.esm.service.ValidatorUtil;
 import com.epam.esm.service.exceptions.NotFoundException;
 import org.springframework.http.HttpStatus;

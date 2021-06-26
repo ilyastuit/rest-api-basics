@@ -1,6 +1,7 @@
-package com.epam.esm.domain.giftcertificate;
+package com.epam.esm.service.giftcertificate;
 
-import com.epam.esm.domain.tag.Tag;
+import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.TagRepository;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;

@@ -1,4 +1,4 @@
-package com.epam.esm.domain.tag;
+package com.epam.esm.entity;
 
 import java.util.Objects;
 

@@ -1,8 +1,11 @@
 package com.epam.esm.api.v1;
 
-import com.epam.esm.domain.giftcertificate.GiftCertificate;
-import com.epam.esm.domain.giftcertificate.validation.GiftCertificateValidationErrors;
-import com.epam.esm.service.GiftCertificateService;
+import com.epam.esm.service.error.ErrorCode;
+import com.epam.esm.service.error.HttpError;
+import com.epam.esm.service.error.HttpErrorImpl;
+import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.service.giftcertificate.validation.GiftCertificateValidationErrors;
+import com.epam.esm.service.giftcertificate.GiftCertificateService;
 import com.epam.esm.service.ValidatorUtil;
 import com.epam.esm.service.exceptions.NotFoundException;
 import org.springframework.http.HttpStatus;
@@ -58,7 +61,8 @@ public class GiftCertificateController {
         try {
             return new ResponseEntity<>(this.giftCertificateService.getOne(id, withTags), HttpStatus.OK);
         } catch (NotFoundException exception) {
-            return new ResponseEntity<>("GiftCertificate with id = " + id + " is not found.", HttpStatus.NOT_FOUND);
+            HttpError httpError = new HttpErrorImpl(HttpStatus.NOT_FOUND, "GiftCertificate with id = " + id + " is not found.", ErrorCode.GiftCertificate);
+            return new ResponseEntity<>(httpError, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -83,7 +87,8 @@ public class GiftCertificateController {
         } else if(tag.isPresent()) {
             return new ResponseEntity<>(this.giftCertificateService.getAllByTagName(tag.get()), HttpStatus.OK);
         }
-        return new ResponseEntity<>("Please provide the search parameter <q> or <tag>", HttpStatus.BAD_REQUEST);
+        HttpError httpError = new HttpErrorImpl(HttpStatus.BAD_REQUEST, "Please provide the search parameter <q> or <tag>", ErrorCode.GiftCertificate);
+        return new ResponseEntity<>(httpError, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -118,7 +123,8 @@ public class GiftCertificateController {
     public ResponseEntity<?> update(@PathVariable("id") int id, @RequestBody GiftCertificate giftCertificate) {
 
         if (!this.giftCertificateService.isExistById(id)) {
-            return new ResponseEntity<>("GiftCertificate with id = " + id + " is not found.", HttpStatus.NOT_FOUND);
+            HttpError httpError = new HttpErrorImpl(HttpStatus.NOT_FOUND, "GiftCertificate with id = " + id + " is not found.", ErrorCode.GiftCertificate);
+            return new ResponseEntity<>(httpError, HttpStatus.NOT_FOUND);
         }
 
         final BindingResult bindingResult = ValidatorUtil.validate(giftCertificate, this.giftCertificateValidator);
@@ -132,7 +138,8 @@ public class GiftCertificateController {
         try {
             result = this.giftCertificateService.getOne(this.giftCertificateService.update(id, giftCertificate), true);
         } catch (NotFoundException exception) {
-            return new ResponseEntity<>("Error in the process of updating.", HttpStatus.INTERNAL_SERVER_ERROR);
+            HttpError httpError = new HttpErrorImpl(HttpStatus.INTERNAL_SERVER_ERROR, "Error in the process of updating.", ErrorCode.GiftCertificate);
+            return new ResponseEntity<>(httpError, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

@@ -1,7 +1,7 @@
 package com.epam.esm.repository;
 
-import com.epam.esm.domain.tag.Tag;
-import com.epam.esm.domain.tag.TagResultSetExtractor;
+import com.epam.esm.entity.Tag;
+import com.epam.esm.service.tag.TagResultSetExtractor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;

@@ -1,33 +1,40 @@
-package com.epam.esm.domain.giftcertificate.validation;
+package com.epam.esm.service.error;
 
-import com.epam.esm.domain.ValidationErrors;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.springframework.http.HttpStatus;
 
 import java.util.Map;
 
-@JsonSerialize(using = GiftCertificateApiErrorsSerializer.class)
-public class GiftCertificateValidationErrors implements ValidationErrors {
+@JsonSerialize(using = HttpErrorSerializer.class)
+public class HttpErrorImpl implements HttpError{
 
     private final HttpStatus status;
     private final String message;
-    private final Map<String, String> errors;
+    private final ErrorCode code;
 
-    public GiftCertificateValidationErrors(HttpStatus status, String message, Map<String, String> errors) {
+    public HttpErrorImpl(HttpStatus status, String message, ErrorCode code) {
         this.status = status;
         this.message = message;
-        this.errors = errors;
+        this.code = code;
     }
 
+    @Override
+    public String getCode() {
+        return getStatus().value() + code.getCode();
+    }
+
+    @Override
     public HttpStatus getStatus() {
         return status;
     }
 
+    @Override
     public String getMessage() {
         return message;
     }
 
+    @Override
     public Map<String, String> getErrors() {
-        return errors;
+        return null;
     }
 }

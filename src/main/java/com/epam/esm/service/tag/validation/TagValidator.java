@@ -1,6 +1,6 @@
-package com.epam.esm.domain.tag.validation;
+package com.epam.esm.service.tag.validation;
 
-import com.epam.esm.domain.tag.Tag;
+import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.TagRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;

@@ -1,8 +1,8 @@
 package com.epam.esm.repository;
 
-import com.epam.esm.domain.giftcertificate.GiftCertificate;
-import com.epam.esm.domain.giftcertificate.GiftCertificateResultSetExtractor;
-import com.epam.esm.domain.tag.Tag;
+import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.service.giftcertificate.GiftCertificateResultSetExtractor;
+import com.epam.esm.entity.Tag;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
