@@ -1,15 +1,13 @@
 package com.epam.esm.domain.giftcertificate.validation;
 
+import com.epam.esm.domain.ApiErrors;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.springframework.http.HttpStatus;
 
-import java.io.Serializable;
 import java.util.Map;
 
-@JsonSerialize(using = GiftCertificateSerializer.class)
-public class GiftCertificateApiErrors implements Serializable {
-
-    public final static String DEFAULT_ERROR_MESSAGE = "Validation failed.";
+@JsonSerialize(using = GiftCertificateApiErrorsSerializer.class)
+public class GiftCertificateApiErrors implements ApiErrors {
 
     private final HttpStatus status;
     private final String message;

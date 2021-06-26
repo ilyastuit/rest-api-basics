@@ -2,8 +2,8 @@ package com.epam.esm.api.v1;
 
 import com.epam.esm.domain.giftcertificate.GiftCertificate;
 import com.epam.esm.domain.giftcertificate.validation.GiftCertificateApiErrors;
-import com.epam.esm.service.CheckerUtil;
 import com.epam.esm.service.GiftCertificateService;
+import com.epam.esm.service.ValidatorUtil;
 import com.epam.esm.service.exceptions.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,7 +35,7 @@ public class GiftCertificateController {
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> one(@PathVariable("id") int id, @RequestParam("tags") Optional<String> tags) {
-        boolean withTags = CheckerUtil.isValidBoolean(tags);
+        boolean withTags = ValidatorUtil.isValidBoolean(tags);
 
         try {
             return new ResponseEntity<>(this.giftCertificateService.getOne(id, withTags), HttpStatus.OK);
@@ -60,10 +60,11 @@ public class GiftCertificateController {
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> create(@RequestBody GiftCertificate giftCertificate) {
 
-        final BindingResult bindingResult = validate(giftCertificate, this.giftCertificateValidator);
+        final BindingResult bindingResult = ValidatorUtil.validate(giftCertificate, this.giftCertificateValidator);
 
         if (bindingResult.hasErrors()) {
-            return returnApiErrors(bindingResult);
+            GiftCertificateApiErrors result = new GiftCertificateApiErrors(HttpStatus.BAD_REQUEST, GiftCertificateApiErrors.DEFAULT_ERROR_MESSAGE, ValidatorUtil.getErrors(bindingResult));
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseEntity<>(this.giftCertificateService.save(giftCertificate), HttpStatus.CREATED);
@@ -76,10 +77,11 @@ public class GiftCertificateController {
             return new ResponseEntity<>("GiftCertificate with id = " + id + " is not found.", HttpStatus.NOT_FOUND);
         }
 
-        final BindingResult bindingResult = validate(giftCertificate, this.giftCertificateValidator);
+        final BindingResult bindingResult = ValidatorUtil.validate(giftCertificate, this.giftCertificateValidator);
 
         if (bindingResult.hasErrors()) {
-            return returnApiErrors(bindingResult);
+            GiftCertificateApiErrors result = new GiftCertificateApiErrors(HttpStatus.BAD_REQUEST, GiftCertificateApiErrors.DEFAULT_ERROR_MESSAGE, ValidatorUtil.getErrors(bindingResult));
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
 
         GiftCertificate result = null;
@@ -96,26 +98,5 @@ public class GiftCertificateController {
         this.giftCertificateService.delete(id);
 
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    public ResponseEntity<?> returnApiErrors(BindingResult bindingResult) {
-        Map<String, String> errors = new HashMap<>();
-
-        for (FieldError fieldError : bindingResult.getFieldErrors()) {
-            errors.put(fieldError.getField(), fieldError.getDefaultMessage());
-        }
-        for (ObjectError error : bindingResult.getGlobalErrors()) {
-            errors.put(error.getObjectName(), error.getDefaultMessage());
-        }
-
-        GiftCertificateApiErrors result = new GiftCertificateApiErrors(HttpStatus.BAD_REQUEST, GiftCertificateApiErrors.DEFAULT_ERROR_MESSAGE, errors);
-        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
-    }
-
-    private BindingResult validate(GiftCertificate giftCertificate, Validator validator) {
-        final DataBinder dataBinder = new DataBinder(giftCertificate);
-        dataBinder.addValidators(this.giftCertificateValidator);
-        dataBinder.validate();
-        return dataBinder.getBindingResult();
     }
 }

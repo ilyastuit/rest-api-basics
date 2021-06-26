@@ -71,9 +71,9 @@ public class GiftCertificateService {
     }
 
     public List<GiftCertificate> getAll(Optional<String> tags, Optional<String> date, Optional<String> name) {
-        boolean withTags = CheckerUtil.isValidBoolean(tags);
-        boolean sortByDate = CheckerUtil.isValidSort(date);
-        boolean sortByName = CheckerUtil.isValidSort(name);
+        boolean withTags = ValidatorUtil.isValidBoolean(tags);
+        boolean sortByDate = ValidatorUtil.isValidSort(date);
+        boolean sortByName = ValidatorUtil.isValidSort(name);
 
         if (sortByDate && !sortByName) {
             return this.getAllSortByDate(withTags, date.get());
@@ -121,8 +121,8 @@ public class GiftCertificateService {
     }
 
     public List<GiftCertificate> getAllByNameOrDescription(String text, Optional<String> date, Optional<String> name) {
-        boolean sortByDate = CheckerUtil.isValidSort(date);
-        boolean sortByName = CheckerUtil.isValidSort(name);
+        boolean sortByDate = ValidatorUtil.isValidSort(date);
+        boolean sortByName = ValidatorUtil.isValidSort(name);
 
         if (sortByDate && !sortByName) {
             return this.getAllByNameOrDescriptionSortByDate(text, date.get());
