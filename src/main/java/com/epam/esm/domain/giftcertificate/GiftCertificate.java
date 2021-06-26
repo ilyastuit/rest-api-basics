@@ -111,6 +111,10 @@ public class GiftCertificate {
         return tags;
     }
 
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
+    }
+
     public void addTag(Tag tag) {
         if (this.tags == null) {
             this.tags = new HashSet<>();
