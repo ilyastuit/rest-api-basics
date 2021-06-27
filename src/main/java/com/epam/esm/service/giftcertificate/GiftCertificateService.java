@@ -20,7 +20,7 @@ public class GiftCertificateService {
         this.certificateRepository = certificateRepository;
     }
 
-    public int save(GiftCertificate giftCertificate) throws NotFoundException {
+    public int save(GiftCertificate giftCertificate) {
         giftCertificate.setCreateDate(LocalDateTime.now());
 
         MapSqlParameterSource params = prepareParams(giftCertificate);
@@ -29,12 +29,17 @@ public class GiftCertificateService {
         return this.certificateRepository.save(params);
     }
 
-    public int update(int id, GiftCertificate giftCertificate) throws NotFoundException {
+    public int update(int id, GiftCertificate giftCertificate) {
         return this.certificateRepository.update(id, prepareParams(giftCertificate));
     }
 
     public boolean isExistById(int id) {
-        return this.certificateRepository.isExistById(id);
+        try {
+            getFromList(this.certificateRepository.findById(id), id);
+            return true;
+        } catch (NotFoundException exception) {
+            return false;
+        }
     }
 
     public GiftCertificate getOne(int id, boolean withTags) throws NotFoundException {

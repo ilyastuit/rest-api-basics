@@ -35,20 +35,15 @@ public class GiftCertificateRepository {
         this.tagService = tagService;
     }
 
-    public int save(MapSqlParameterSource params) throws NotFoundException {
+    public int save(MapSqlParameterSource params) {
         final String SQL = "INSERT INTO gifts.gift_certificate (name, description, price, duration, create_date, last_update_date) VALUES (:name, :description, :price, :duration, :create_date, :last_update_date)";
         return updateQuery(params, SQL);
     }
 
-    public int update(Integer id, MapSqlParameterSource params) throws NotFoundException {
+    public int update(Integer id, MapSqlParameterSource params) {
         final String SQL = "UPDATE gifts.gift_certificate SET name = :name, description = :description, price = :price, duration = :duration, last_update_date = :last_update_date WHERE id = :id";
         params.addValue("id", id);
         return updateQuery(params, SQL);
-    }
-
-    public boolean isExistById(int id) {
-        String SQL = "SELECT gc.id FROM gifts.gift_certificate gc WHERE gc.id = ?";
-        return this.jdbcTemplate.query(SQL, new BeanPropertyRowMapper<>(GiftCertificate.class), id).stream().findAny().orElse(null) != null;
     }
 
     public List<GiftCertificate> findById(int id) {
@@ -56,14 +51,14 @@ public class GiftCertificateRepository {
         return jdbcTemplate.query(SQL, new GiftCertificateResultSetExtractor(), id);
     }
 
-    public List<GiftCertificate> findAll() {
-        String SQL = "SELECT gc.id, gc.name, gc.description, gc.price, gc.duration, gc.create_date, gc.last_update_date from gifts.gift_certificate gc";
-        return jdbcTemplate.query(SQL, new GiftCertificateResultSetExtractor());
-    }
-
     public List<GiftCertificate> findByIdWithTags(int id) {
         String SQL = "SELECT gc.id, gc.name, gc.description, gc.price, gc.duration, gc.create_date, gc.last_update_date FROM gifts.gift_certificate gc WHERE gc.id=?";
         return jdbcTemplate.query(SQL, new GiftCertificateResultSetExtractor(tagService).withTags(), id);
+    }
+
+    public List<GiftCertificate> findAll() {
+        String SQL = "SELECT gc.id, gc.name, gc.description, gc.price, gc.duration, gc.create_date, gc.last_update_date from gifts.gift_certificate gc";
+        return jdbcTemplate.query(SQL, new GiftCertificateResultSetExtractor());
     }
 
     public List<GiftCertificate> findAllWithTags() {
@@ -123,9 +118,9 @@ public class GiftCertificateRepository {
         return jdbcTemplate.query(SQL, new GiftCertificateResultSetExtractor());
     }
 
-    public List<GiftCertificate> findAllByNameOrDescriptionOrderByDateAndName(String text, String date, String name) {
+    public List<GiftCertificate> findAllByNameOrDescriptionOrderByDate(String text, String date) {
         String likeText = this.prepareText(text);
-        String SQL = "SELECT gc.id, gc.name, gc.description, gc.price, gc.duration, gc.create_date, gc.last_update_date FROM gifts.gift_certificate gc WHERE gc.name LIKE ? OR gc.description LIKE ? ORDER BY gc.create_date "+ date +", gc.name " + name;
+        String SQL = "SELECT gc.id, gc.name, gc.description, gc.price, gc.duration, gc.create_date, gc.last_update_date FROM gifts.gift_certificate gc WHERE gc.name LIKE ? OR gc.description LIKE ? ORDER BY gc.create_date " + date;
         return jdbcTemplate.query(SQL, new GiftCertificateResultSetExtractor(tagService).withTags(), likeText, likeText);
     }
 
@@ -135,13 +130,13 @@ public class GiftCertificateRepository {
         return jdbcTemplate.query(SQL, new GiftCertificateResultSetExtractor(tagService).withTags(), likeText, likeText);
     }
 
-    public List<GiftCertificate> findAllByNameOrDescriptionOrderByDate(String text, String date) {
+    public List<GiftCertificate> findAllByNameOrDescriptionOrderByDateAndName(String text, String date, String name) {
         String likeText = this.prepareText(text);
-        String SQL = "SELECT gc.id, gc.name, gc.description, gc.price, gc.duration, gc.create_date, gc.last_update_date FROM gifts.gift_certificate gc WHERE gc.name LIKE ? OR gc.description LIKE ? ORDER BY gc.create_date " + date;
+        String SQL = "SELECT gc.id, gc.name, gc.description, gc.price, gc.duration, gc.create_date, gc.last_update_date FROM gifts.gift_certificate gc WHERE gc.name LIKE ? OR gc.description LIKE ? ORDER BY gc.create_date "+ date +", gc.name " + name;
         return jdbcTemplate.query(SQL, new GiftCertificateResultSetExtractor(tagService).withTags(), likeText, likeText);
     }
 
-    private int updateQuery(MapSqlParameterSource params, String SQL) throws NotFoundException {
+    private int updateQuery(MapSqlParameterSource params, String SQL) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         transactionTemplate.execute(status -> {
             namedParameterJdbcTemplate.update(SQL, params, keyHolder, new String[] {"id"});
@@ -153,7 +148,7 @@ public class GiftCertificateRepository {
         return certificateId;
     }
 
-    private void updateTags(MapSqlParameterSource params, int certificateId) throws NotFoundException {
+    private void updateTags(MapSqlParameterSource params, int certificateId) {
         try {
             List<Tag> tags = (List<Tag>) params.getValue("tags");
             for (Tag tag: tags) {
@@ -167,7 +162,7 @@ public class GiftCertificateRepository {
                     this.tagService.assignTagToGiftCertificate(certificateId, tagId);
                 }
             }
-        } catch (IllegalArgumentException | TagNameAlreadyExistException ignored) {
+        } catch (IllegalArgumentException | TagNameAlreadyExistException | NotFoundException ignored) {
         }
     }
 

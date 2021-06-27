@@ -18,7 +18,7 @@ public class TagService {
     }
 
     public Tag getById(int id) throws NotFoundException {
-        return this.repository.findOne(id).stream().findAny().orElseThrow(() -> new NotFoundException("Tag is not found (id = "+ id +")"));
+        return this.repository.findById(id).stream().findAny().orElseThrow(() -> new NotFoundException("Tag is not found (id = "+ id +")"));
     }
 
     public List<Tag> getAll() {

@@ -27,7 +27,7 @@ public class TagRepository {
         this.transactionTemplate = transactionTemplate;
     }
 
-    public List<Tag> findOne(int id) {
+    public List<Tag> findById(int id) {
         return jdbcTemplate.query("SELECT t.id, t.name FROM gifts.tag t WHERE t.id=?", new TagResultSetExtractor(), id);
     }
 

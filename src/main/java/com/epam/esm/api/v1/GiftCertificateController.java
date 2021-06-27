@@ -108,12 +108,7 @@ public class GiftCertificateController {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
 
-        try {
-            return new ResponseEntity<>(this.giftCertificateService.save(giftCertificate), HttpStatus.CREATED);
-        } catch (NotFoundException exception) {
-            HttpError httpError = new HttpErrorImpl(HttpStatus.NOT_FOUND, exception.getMessage(), ErrorCode.GiftCertificate);
-            return new ResponseEntity<>(httpError, HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(this.giftCertificateService.save(giftCertificate), HttpStatus.CREATED);
     }
 
     /**
