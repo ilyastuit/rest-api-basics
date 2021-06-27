@@ -6,11 +6,11 @@ CREATE TABLE IF NOT EXISTS gifts.gift_certificate_tag
     CONSTRAINT fk_gift_certificate
         FOREIGN KEY(gift_certificate_id)
             REFERENCES gifts.gift_certificate(id)
-            ON DELETE NO ACTION
+            ON DELETE CASCADE
             ON UPDATE NO ACTION,
     CONSTRAINT fk_tag
         FOREIGN KEY(tag_id)
             REFERENCES gifts.tag(id)
-            ON DELETE NO ACTION
+            ON DELETE CASCADE
             ON UPDATE NO ACTION
 );

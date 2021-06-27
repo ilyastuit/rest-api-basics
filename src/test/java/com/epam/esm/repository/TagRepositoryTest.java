@@ -1,6 +1,7 @@
 package com.epam.esm.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static com.epam.esm.repository.TagBuilder.*;
 
 import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.exceptions.TagNameAlreadyExistException;
@@ -22,17 +23,9 @@ import java.util.Properties;
 
 public class TagRepositoryTest {
 
+    private final TagBuilder tagBuilder = new TagBuilder();
     private static TagRepository tagRepository;
     private static Flyway flyway;
-
-    public final static int ALL_TAGS_COUNT = 10;
-    public final static int NOT_EXIST_TAG_ID = 0;
-    public final static String EXIST_TAG_NAME = "android";
-    public final static String NOT_EXIST_TAG_NAME = "new tag";
-    public final static int CERTIFICATE_ID_WITH_TAG = 1;
-    public final static int CERTIFICATE_ID_WITHOUT_TAG = 6;
-    public final static int TAG_ID_WITH_CERTIFICATE = 1;
-    public final static int TAG_ID_WITHOUT_CERTIFICATE = 10;
 
     @BeforeAll
     public static void setUpBeforeClass() throws Exception {
@@ -66,14 +59,16 @@ public class TagRepositoryTest {
     }
 
     @Test
-    void successFindOne() {
-        assertEquals(1, tagRepository.findOne(1).size());
-        assertEquals(1, tagRepository.findOne(1).get(0).getId());
+    void successFindById() {
+        Tag originalTag = tagBuilder.build();
+        assertEquals(1, tagRepository.findById(1).size());
+        Tag fetchedTag = tagRepository.findById(1).get(0);
+        assertTags(originalTag, fetchedTag);
     }
 
     @Test
     void emptyFindOne() {
-        assertEquals(0, tagRepository.findOne(NOT_EXIST_TAG_ID).size());
+        assertEquals(0, tagRepository.findById(NOT_EXIST_TAG_ID).size());
     }
 
     @Test
@@ -83,23 +78,28 @@ public class TagRepositoryTest {
 
     @Test
     void successSave() throws TagNameAlreadyExistException {
-        assertEquals(ALL_TAGS_COUNT + 1, tagRepository.save(new Tag(0, NOT_EXIST_TAG_NAME)));
+        Tag originalTag = tagBuilder.withId(NOT_EXIST_TAG_ID).withName(NOT_EXIST_TAG_NAME).build();
+        assertEquals(ALL_TAGS_COUNT + 1, tagRepository.save(originalTag));
 
         assertEquals(ALL_TAGS_COUNT + 1, tagRepository.findAll().size());
-        assertEquals(ALL_TAGS_COUNT + 1, tagRepository.findOne(ALL_TAGS_COUNT + 1).get(0).getId());
-        assertEquals(NOT_EXIST_TAG_NAME, tagRepository.findOne(ALL_TAGS_COUNT + 1).get(0).getName());
+        Tag fetchedTag = tagRepository.findById(ALL_TAGS_COUNT + 1).get(0);
+        assertTags(originalTag, fetchedTag);
     }
 
     @Test
     void failSave() {
         assertThrows(TagNameAlreadyExistException.class, () -> {
-            tagRepository.save(new Tag(0, EXIST_TAG_NAME));
+            tagRepository.save(tagBuilder.withName(EXIST_TAG_NAME).build());
         });
     }
 
     @Test
     void successFindByName() {
-        assertEquals(EXIST_TAG_NAME, tagRepository.findByName(EXIST_TAG_NAME).get(0).getName());
+        Tag originalTag = tagBuilder.build();
+        final String tagName = originalTag.getName();
+        assertEquals(1, tagRepository.findByName(tagName).size());
+        Tag fetchedTag = tagRepository.findByName(tagName).get(0);
+        assertTags(originalTag, fetchedTag);
     }
 
     @Test
@@ -136,9 +136,14 @@ public class TagRepositoryTest {
     @Test
     void successDeleteById() {
         assertEquals(1, tagRepository.findAssignedTagToCertificate(CERTIFICATE_ID_WITH_TAG, TAG_ID_WITH_CERTIFICATE).size());
-        assertEquals(1, tagRepository.findOne(TAG_ID_WITH_CERTIFICATE).size());
+        assertEquals(1, tagRepository.findById(TAG_ID_WITH_CERTIFICATE).size());
         tagRepository.deleteById(1);
         assertEquals(0, tagRepository.findAssignedTagToCertificate(CERTIFICATE_ID_WITH_TAG, TAG_ID_WITH_CERTIFICATE).size());
-        assertEquals(0, tagRepository.findOne(TAG_ID_WITH_CERTIFICATE).size());
+        assertEquals(0, tagRepository.findById(TAG_ID_WITH_CERTIFICATE).size());
+    }
+
+    private void assertTags(Tag originalTag, Tag fetchedTag) {
+        assertEquals(originalTag.getId(), fetchedTag.getId());
+        assertEquals(originalTag.getName(), fetchedTag.getName());
     }
 }

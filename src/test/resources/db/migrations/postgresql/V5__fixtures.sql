@@ -14,7 +14,7 @@ INSERT INTO gifts.gift_certificate (id, name, description, price, duration, crea
 VALUES (5, 'English courses', 'English courses', 1500.00, 2000, '2020-10-09 10:48:23', '2021-02-01 08:48:23');
 
 INSERT INTO gifts.gift_certificate (id, name, description, price, duration, create_date, last_update_date)
-VALUES (6, 'Without tag', 'Without tag', 1500.00, 2000, '2020-10-09 10:48:23', '2021-02-01 08:48:23');
+VALUES (6, 'Without tag e', 'Without tag e', 1500.00, 2000, '2020-10-09 10:48:23', '2021-02-01 08:48:23');
 
 INSERT INTO gifts.tag (id, name) VALUES (1, 'android');
 INSERT INTO gifts.tag (id, name) VALUES (2, 'ios');
