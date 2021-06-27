@@ -45,7 +45,7 @@ public class TagService {
     }
 
     public boolean isTagAlreadyAssignedToGiftCertificate(int certificateId, int tagId) {
-        return checkIsListEmpty(this.repository.isTagAlreadyAssignedToGiftCertificate(certificateId, tagId));
+        return checkIsListEmpty(this.repository.findAssignedCertificateToTag(certificateId, tagId));
     }
 
     private boolean checkIsListEmpty(List<Tag> list) {

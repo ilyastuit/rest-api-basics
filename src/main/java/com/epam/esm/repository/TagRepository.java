@@ -46,7 +46,7 @@ public class TagRepository {
         return this.jdbcTemplate.query(SQL, new TagResultSetExtractor(), name);
     }
 
-    public List<Tag> isTagAlreadyAssignedToGiftCertificate(int certificateId, int tagId) {
+    public List<Tag> findAssignedCertificateToTag(int certificateId, int tagId) {
         final String SQL = "SELECT gct.tag_id as id FROM gifts.gift_certificate_tag gct WHERE gct.gift_certificate_id = ? AND gct.tag_id = ?";
         return this.jdbcTemplate.query(SQL, new BeanPropertyRowMapper<>(Tag.class), certificateId, tagId);
     }
