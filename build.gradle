@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'war'
     id "org.flywaydb.flyway" version "7.10.0"
+    id 'jacoco'
 }
 
 group 'com.epam.esm'
@@ -35,13 +36,22 @@ dependencies {
 
     compileOnly "org.flywaydb:flyway-core:7.10.0"
 
-    testImplementation 'junit:junit:4.11'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
+    testImplementation 'org.mockito:mockito-core:3.11.1'
 }
 
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = false
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('reports/tests/coverage/')
+    }
 }
 
 war {
