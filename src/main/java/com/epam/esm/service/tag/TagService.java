@@ -2,6 +2,7 @@ package com.epam.esm.service.tag;
 
 import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.TagRepository;
+import com.epam.esm.repository.exceptions.TagNameAlreadyExistException;
 import com.epam.esm.service.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,7 @@ public class TagService {
         this.repository.deleteById(id);
     }
 
-    public int save(Tag tag) {
+    public int save(Tag tag) throws TagNameAlreadyExistException {
         return this.repository.save(tag);
     }
 
@@ -45,7 +46,7 @@ public class TagService {
     }
 
     public boolean isTagAlreadyAssignedToGiftCertificate(int certificateId, int tagId) {
-        return checkIsListEmpty(this.repository.findAssignedCertificateToTag(certificateId, tagId));
+        return checkIsListEmpty(this.repository.findAssignedTagToCertificate(certificateId, tagId));
     }
 
     private boolean checkIsListEmpty(List<Tag> list) {

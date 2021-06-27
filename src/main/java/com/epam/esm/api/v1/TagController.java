@@ -1,6 +1,10 @@
 package com.epam.esm.api.v1;
 
 import com.epam.esm.entity.Tag;
+import com.epam.esm.repository.exceptions.TagNameAlreadyExistException;
+import com.epam.esm.service.error.ErrorCode;
+import com.epam.esm.service.error.HttpError;
+import com.epam.esm.service.error.HttpErrorImpl;
 import com.epam.esm.service.tag.validation.TagValidationErrors;
 import com.epam.esm.service.tag.validation.TagValidator;
 import com.epam.esm.service.tag.TagService;
@@ -47,7 +51,8 @@ public class TagController {
         try {
             return new ResponseEntity<>(this.tagService.getById(id), HttpStatus.OK);
         } catch (NotFoundException exception) {
-            return new ResponseEntity<>("Tag is not found (id = " + id + ")", HttpStatus.NOT_FOUND);
+            HttpError httpError = new HttpErrorImpl(HttpStatus.NOT_FOUND, exception.getMessage(), ErrorCode.Tag);
+            return new ResponseEntity<>(httpError, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -67,7 +72,12 @@ public class TagController {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(this.tagService.save(tag), HttpStatus.CREATED);
+        try {
+            return new ResponseEntity<>(this.tagService.save(tag), HttpStatus.CREATED);
+        } catch (TagNameAlreadyExistException exception) {
+            HttpError httpError = new HttpErrorImpl(HttpStatus.BAD_REQUEST, exception.getMessage(), ErrorCode.Tag);
+            return new ResponseEntity<>(httpError, HttpStatus.BAD_REQUEST);
+        }
     }
 
     /**

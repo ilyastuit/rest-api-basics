@@ -1,8 +1,9 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.entity.Tag;
+import com.epam.esm.repository.exceptions.TagNameAlreadyExistException;
 import com.epam.esm.service.tag.TagResultSetExtractor;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -34,11 +35,15 @@ public class TagRepository {
         return jdbcTemplate.query("SELECT t.id, t.name FROM gifts.tag t", new TagResultSetExtractor());
     }
 
-    public int save(Tag tag) {
+    public int save(Tag tag) throws TagNameAlreadyExistException {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         final String SQL = "INSERT INTO gifts.tag (name) VALUES (:name)";
-        this.namedParameterJdbcTemplate.update(SQL, new MapSqlParameterSource().addValue("name",tag.getName()), keyHolder, new String[] {"id"});
-        return keyHolder.getKey() != null ? keyHolder.getKey().intValue() : 0;
+        try {
+            this.namedParameterJdbcTemplate.update(SQL, new MapSqlParameterSource().addValue("name",tag.getName()), keyHolder, new String[] {"id"});
+        } catch (DuplicateKeyException exception) {
+            throw new TagNameAlreadyExistException(tag.getName());
+        }
+        return keyHolder.getKey().intValue();
     }
 
     public List<Tag> findByName(String name) {
@@ -46,9 +51,9 @@ public class TagRepository {
         return this.jdbcTemplate.query(SQL, new TagResultSetExtractor(), name);
     }
 
-    public List<Tag> findAssignedCertificateToTag(int certificateId, int tagId) {
-        final String SQL = "SELECT gct.tag_id as id FROM gifts.gift_certificate_tag gct WHERE gct.gift_certificate_id = ? AND gct.tag_id = ?";
-        return this.jdbcTemplate.query(SQL, new BeanPropertyRowMapper<>(Tag.class), certificateId, tagId);
+    public List<Tag> findAssignedTagToCertificate(int certificateId, int tagId) {
+        final String SQL = "SELECT t.id as id, t.name as name FROM gifts.tag t LEFT JOIN gifts.gift_certificate_tag gct ON t.id = gct.tag_id WHERE gct.gift_certificate_id = ? AND gct.tag_id = ?";
+        return this.jdbcTemplate.query(SQL, new TagResultSetExtractor(), certificateId, tagId);
     }
 
     public void assignTagToGiftCertificate(int certificateId, int tagId) {
