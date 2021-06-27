@@ -8,6 +8,7 @@ services:
     container_name: tomcat
     links:
       - postgres
+      - postgres-test
     volumes:
     - ./docker/tomcat/tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml
     - ./docker/tomcat/context.xml:/usr/local/tomcat/webapps/manager/META-INF/context.xml
@@ -28,5 +29,19 @@ services:
     volumes:
       - pg-data:/pg-data
 
+  postgres-test:
+    container_name: postgres-test
+    image: postgres:13.1-alpine
+    environment:
+      - POSTGRES_PASSWORD=rest-test
+      - POSTGRES_USER=rest-test
+      - POSTGRES_DB=rest-test
+      - PGDATA=/pg-data-test
+    ports:
+      - 54322:5432
+    volumes:
+      - pg-data-test:/pg-data-test
+
 volumes:
   pg-data:
+  pg-data-test:

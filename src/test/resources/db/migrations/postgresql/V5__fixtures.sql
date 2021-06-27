@@ -13,6 +13,9 @@ VALUES (4, 'Python Backend Development', 'Python Backend Development', 300.21, 4
 INSERT INTO gifts.gift_certificate (id, name, description, price, duration, create_date, last_update_date)
 VALUES (5, 'English courses', 'English courses', 1500.00, 2000, '2020-10-09 10:48:23', '2021-02-01 08:48:23');
 
+INSERT INTO gifts.gift_certificate (id, name, description, price, duration, create_date, last_update_date)
+VALUES (6, 'Without tag', 'Without tag', 1500.00, 2000, '2020-10-09 10:48:23', '2021-02-01 08:48:23');
+
 INSERT INTO gifts.tag (id, name) VALUES (1, 'android');
 INSERT INTO gifts.tag (id, name) VALUES (2, 'ios');
 INSERT INTO gifts.tag (id, name) VALUES (3, 'mobile');
@@ -22,6 +25,7 @@ INSERT INTO gifts.tag (id, name) VALUES (6, 'java');
 INSERT INTO gifts.tag (id, name) VALUES (7, 'python');
 INSERT INTO gifts.tag (id, name) VALUES (8, 'language');
 INSERT INTO gifts.tag (id, name) VALUES (9, 'english');
+INSERT INTO gifts.tag (id, name) VALUES (10, 'without certificate');
 
 INSERT INTO gifts.gift_certificate_tag (id, gift_certificate_id, tag_id) VALUES (1, 1, 1);
 INSERT INTO gifts.gift_certificate_tag (id, gift_certificate_id, tag_id) VALUES (2, 1, 3);
@@ -38,6 +42,6 @@ INSERT INTO gifts.gift_certificate_tag (id, gift_certificate_id, tag_id) VALUES 
 INSERT INTO gifts.gift_certificate_tag (id, gift_certificate_id, tag_id) VALUES (13, 5, 8);
 INSERT INTO gifts.gift_certificate_tag (id, gift_certificate_id, tag_id) VALUES (14, 5, 9);
 
-ALTER SEQUENCE gifts.gift_certificate_id_seq RESTART WITH 6;
-ALTER SEQUENCE gifts.tag_id_seq RESTART WITH 10;
+ALTER SEQUENCE gifts.gift_certificate_id_seq RESTART WITH 7;
+ALTER SEQUENCE gifts.tag_id_seq RESTART WITH 11;
 ALTER SEQUENCE gifts.gift_certificate_tag_id_seq RESTART WITH 15;
