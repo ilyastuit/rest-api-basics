@@ -1,7 +1,7 @@
 package com.epam.esm.service.tag.validation;
 
 import com.epam.esm.entity.Tag;
-import com.epam.esm.repository.TagRepository;
+import com.epam.esm.service.tag.TagService;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -10,10 +10,10 @@ import org.springframework.validation.Validator;
 public class TagValidator implements Validator {
 
     private boolean fromGiftCertificate = false;
-    private final TagRepository tagRepository;
+    private final TagService tagService;
 
-    public TagValidator(TagRepository tagRepository) {
-        this.tagRepository = tagRepository;
+    public TagValidator(TagService tagService) {
+        this.tagService = tagService;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class TagValidator implements Validator {
             errors.rejectValue("name", "name.required", "Name is required and should not be empty.");
         }
 
-        if (!this.fromGiftCertificate && tagRepository.isNameExist(tag.getName())) {
+        if (!this.fromGiftCertificate && this.tagService.isExistByName(tag.getName())) {
             errors.rejectValue("name", "name.unique", "Tag with this name is already exist.");
         }
     }

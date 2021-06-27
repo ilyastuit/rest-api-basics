@@ -20,40 +20,17 @@ public class GiftCertificateService {
         this.certificateRepository = certificateRepository;
     }
 
-    public int save(GiftCertificate giftCertificate) {
+    public int save(GiftCertificate giftCertificate) throws NotFoundException {
         giftCertificate.setCreateDate(LocalDateTime.now());
-        giftCertificate.setLastUpdateDate(LocalDateTime.now());
 
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("name", giftCertificate.getName());
-        params.addValue("description", giftCertificate.getDescription());
-        params.addValue("price", giftCertificate.getPrice());
-        params.addValue("duration", giftCertificate.getDuration());
+        MapSqlParameterSource params = prepareParams(giftCertificate);
         params.addValue("create_date", Timestamp.valueOf(giftCertificate.getCreateDate()));
-        params.addValue("last_update_date", Timestamp.valueOf(giftCertificate.getLastUpdateDate()));
-
-        if (giftCertificate.getTags() != null && !giftCertificate.getTags().isEmpty()) {
-            params.addValue("tags", giftCertificate.getTags());
-        }
 
         return this.certificateRepository.save(params);
     }
 
-    public int update(int id, GiftCertificate giftCertificate) {
-        giftCertificate.setLastUpdateDate(LocalDateTime.now());
-
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("name", giftCertificate.getName());
-        params.addValue("description", giftCertificate.getDescription());
-        params.addValue("price", giftCertificate.getPrice());
-        params.addValue("duration", giftCertificate.getDuration());
-        params.addValue("last_update_date", Timestamp.valueOf(giftCertificate.getLastUpdateDate()));
-
-        if (giftCertificate.getTags() != null && !giftCertificate.getTags().isEmpty()) {
-            params.addValue("tags", giftCertificate.getTags());
-        }
-
-        return this.certificateRepository.update(id, params);
+    public int update(int id, GiftCertificate giftCertificate) throws NotFoundException {
+        return this.certificateRepository.update(id, prepareParams(giftCertificate));
     }
 
     public boolean isExistById(int id) {
@@ -158,5 +135,22 @@ public class GiftCertificateService {
 
     public void delete(int id) {
         this.certificateRepository.deleteById(id);
+    }
+
+    private MapSqlParameterSource prepareParams(GiftCertificate giftCertificate) {
+        giftCertificate.setLastUpdateDate(LocalDateTime.now());
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("name", giftCertificate.getName());
+        params.addValue("description", giftCertificate.getDescription());
+        params.addValue("price", giftCertificate.getPrice());
+        params.addValue("duration", giftCertificate.getDuration());
+        params.addValue("last_update_date", Timestamp.valueOf(giftCertificate.getLastUpdateDate()));
+
+        if (giftCertificate.getTags() != null && !giftCertificate.getTags().isEmpty()) {
+            params.addValue("tags", giftCertificate.getTags());
+        }
+
+        return params;
     }
 }

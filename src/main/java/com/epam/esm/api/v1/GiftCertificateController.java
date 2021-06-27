@@ -61,7 +61,7 @@ public class GiftCertificateController {
         try {
             return new ResponseEntity<>(this.giftCertificateService.getOne(id, withTags), HttpStatus.OK);
         } catch (NotFoundException exception) {
-            HttpError httpError = new HttpErrorImpl(HttpStatus.NOT_FOUND, "GiftCertificate with id = " + id + " is not found.", ErrorCode.GiftCertificate);
+            HttpError httpError = new HttpErrorImpl(HttpStatus.NOT_FOUND, exception.getMessage(), ErrorCode.GiftCertificate);
             return new ResponseEntity<>(httpError, HttpStatus.NOT_FOUND);
         }
     }
@@ -108,7 +108,12 @@ public class GiftCertificateController {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(this.giftCertificateService.save(giftCertificate), HttpStatus.CREATED);
+        try {
+            return new ResponseEntity<>(this.giftCertificateService.save(giftCertificate), HttpStatus.CREATED);
+        } catch (NotFoundException exception) {
+            HttpError httpError = new HttpErrorImpl(HttpStatus.NOT_FOUND, exception.getMessage(), ErrorCode.GiftCertificate);
+            return new ResponseEntity<>(httpError, HttpStatus.NOT_FOUND);
+        }
     }
 
     /**
@@ -138,7 +143,7 @@ public class GiftCertificateController {
         try {
             result = this.giftCertificateService.getOne(this.giftCertificateService.update(id, giftCertificate), true);
         } catch (NotFoundException exception) {
-            HttpError httpError = new HttpErrorImpl(HttpStatus.INTERNAL_SERVER_ERROR, "Error in the process of updating.", ErrorCode.GiftCertificate);
+            HttpError httpError = new HttpErrorImpl(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), ErrorCode.GiftCertificate);
             return new ResponseEntity<>(httpError, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(result, HttpStatus.OK);

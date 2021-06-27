@@ -17,11 +17,11 @@ public class TagService {
     }
 
     public Tag getById(int id) throws NotFoundException {
-        return repository.findOne(id).stream().findAny().orElseThrow(() -> new NotFoundException("Tag is not found (id = "+ id +")"));
+        return this.repository.findOne(id).stream().findAny().orElseThrow(() -> new NotFoundException("Tag is not found (id = "+ id +")"));
     }
 
     public List<Tag> getAll() {
-        return repository.findAll();
+        return this.repository.findAll();
     }
 
     public void deleteById(int id) {
@@ -33,6 +33,26 @@ public class TagService {
     }
 
     public List<Tag> getByGiftCertificateId(Integer certificateId) {
-        return this.repository.getByGiftCertificateId(certificateId);
+        return this.repository.findByGiftCertificateId(certificateId);
+    }
+
+    public boolean isExistByName(String name) {
+        return checkIsListEmpty(this.repository.findByName(name));
+    }
+
+    public Tag getByName(String name) throws NotFoundException {
+        return this.repository.findByName(name).stream().findAny().orElseThrow(() -> new NotFoundException("Tag is not found (name = "+ name + ")"));
+    }
+
+    public boolean isTagAlreadyAssignedToGiftCertificate(int certificateId, int tagId) {
+        return checkIsListEmpty(this.repository.isTagAlreadyAssignedToGiftCertificate(certificateId, tagId));
+    }
+
+    private boolean checkIsListEmpty(List<Tag> list) {
+        return list.stream().findAny().orElse(null) != null;
+    }
+
+    public void assignTagToGiftCertificate(int certificateId, int tagId) {
+        this.repository.assignTagToGiftCertificate(certificateId, tagId);
     }
 }

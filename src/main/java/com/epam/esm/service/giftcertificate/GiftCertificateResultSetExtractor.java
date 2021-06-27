@@ -2,7 +2,7 @@ package com.epam.esm.service.giftcertificate;
 
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.repository.TagRepository;
+import com.epam.esm.service.tag.TagService;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
@@ -13,10 +13,13 @@ import java.util.*;
 public class GiftCertificateResultSetExtractor implements ResultSetExtractor<List<GiftCertificate>> {
 
     private boolean withTags = false;
-    private final TagRepository tagRepository;
+    private TagService tagService;
 
-    public GiftCertificateResultSetExtractor(TagRepository tagRepository) {
-        this.tagRepository = tagRepository;
+    public GiftCertificateResultSetExtractor() {
+    }
+
+    public GiftCertificateResultSetExtractor(TagService tagService) {
+        this.tagService = tagService;
     }
 
     @Override
@@ -34,7 +37,7 @@ public class GiftCertificateResultSetExtractor implements ResultSetExtractor<Lis
 
         if (this.withTags) {
             for (GiftCertificate giftCertificate: giftList) {
-                giftCertificate.setTags(this.tagRepository.getByGiftCertificateId(giftCertificate.getId()));
+                giftCertificate.setTags(this.tagService.getByGiftCertificateId(giftCertificate.getId()));
             }
         }
 

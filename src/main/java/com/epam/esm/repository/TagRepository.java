@@ -41,19 +41,14 @@ public class TagRepository {
         return keyHolder.getKey() != null ? keyHolder.getKey().intValue() : 0;
     }
 
-    public boolean isNameExist(String name) {
+    public List<Tag> findByName(String name) {
         final String SQL = "SELECT t.id, t.name FROM gifts.tag t WHERE t.name = ?";
-        return this.jdbcTemplate.query(SQL, new TagResultSetExtractor(), name).stream().findAny().orElse(null) != null;
+        return this.jdbcTemplate.query(SQL, new TagResultSetExtractor(), name);
     }
 
-    public Tag getByName(String name) {
-        final String SQL = "SELECT t.id, t.name FROM gifts.tag t WHERE t.name = ?";
-        return this.jdbcTemplate.query(SQL, new TagResultSetExtractor(), name).stream().findAny().orElse(null);
-    }
-
-    public boolean isTagAlreadyAssignedToGiftCertificate(int certificateId, int tagId) {
+    public List<Tag> isTagAlreadyAssignedToGiftCertificate(int certificateId, int tagId) {
         final String SQL = "SELECT gct.tag_id as id FROM gifts.gift_certificate_tag gct WHERE gct.gift_certificate_id = ? AND gct.tag_id = ?";
-        return this.jdbcTemplate.query(SQL, new BeanPropertyRowMapper<>(Tag.class), certificateId, tagId).stream().findAny().orElse(null) != null;
+        return this.jdbcTemplate.query(SQL, new BeanPropertyRowMapper<>(Tag.class), certificateId, tagId);
     }
 
     public void assignTagToGiftCertificate(int certificateId, int tagId) {
@@ -64,7 +59,7 @@ public class TagRepository {
         });
     }
 
-    public List<Tag> getByGiftCertificateId(Integer certificateId) {
+    public List<Tag> findByGiftCertificateId(Integer certificateId) {
         final String SQL = "SELECT t.id, t.name FROM gifts.tag t LEFT JOIN gifts.gift_certificate_tag gct ON gct.tag_id = t.id LEFT JOIN gifts.gift_certificate gc ON gct.gift_certificate_id = gc.id WHERE gc.id = ?";
         return this.jdbcTemplate.query(SQL, new TagResultSetExtractor(), certificateId);
     }
