@@ -4,13 +4,13 @@ restart-app: build-app restart-tomcat
 init: build-app docker-build migrate
 
 build-app:
-	./gradlew clean build
+	./gradlew clean build --stacktrace
 
 docker-build:
 	docker-compose build
 
 migrate:
-	./gradlew flywayClean flywayMigrate
+	./gradlew flywayClean flywayMigrate --stacktrace
 
 docker-up:
 	docker-compose up -d

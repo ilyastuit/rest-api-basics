@@ -1,31 +1,22 @@
 package com.epam.esm.repository;
 
+import com.epam.esm.builder.GiftCertificateBuilder;
+import com.epam.esm.builder.TagBuilder;
+import com.epam.esm.builder.TestEnvironment;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 
-import com.epam.esm.service.tag.TagService;
 import org.flywaydb.core.Flyway;
-import org.flywaydb.core.api.configuration.Configuration;
-import org.flywaydb.core.api.configuration.FluentConfiguration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.jdbc.support.JdbcTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static com.epam.esm.repository.TagBuilder.*;
-import static com.epam.esm.repository.GiftCertificateBuilder.*;
+import static com.epam.esm.builder.TagBuilder.*;
+import static com.epam.esm.builder.GiftCertificateBuilder.*;
 
 public class GiftCertificateRepositoryTest {
 
@@ -35,41 +26,10 @@ public class GiftCertificateRepositoryTest {
     private final GiftCertificateBuilder builder = new GiftCertificateBuilder();
     private final TagBuilder tagBuilder = new TagBuilder();
 
-    public final static int CERTIFICATE_ID_WITH_TAG = 1;
-    public final static int CERTIFICATE_ID_WITHOUT_TAG = 6;
-    public final static int TAG_ID_WITH_CERTIFICATE = 1;
-    public final static int TAG_ID_WITHOUT_CERTIFICATE = 10;
-
-    @BeforeEach
-    public void init() {
-        MockitoAnnotations.openMocks(this);
-    }
-
     @BeforeAll
     public static void setUpBeforeClass() throws Exception {
-        Properties props = new Properties();
-        FileReader file = new FileReader(TagRepositoryTest.class.getResource("/application-test.properties").getFile());
-        props.load(file);
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-
-        dataSource.setDriverClassName(props.getProperty("datasource.driver"));
-        dataSource.setUrl(props.getProperty("datasource.url"));
-        dataSource.setUsername(props.getProperty("datasource.username"));
-        dataSource.setPassword(props.getProperty("datasource.password"));
-
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-        PlatformTransactionManager transactionManager = new JdbcTransactionManager(dataSource);
-        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
-
-        TagRepository tagRepository = new TagRepository(namedParameterJdbcTemplate, jdbcTemplate, transactionTemplate);
-        TagService tagService = new TagService(tagRepository);
-        giftCertificateRepository = new GiftCertificateRepository(jdbcTemplate, namedParameterJdbcTemplate, transactionTemplate, tagService);
-
-        Configuration configuration = new FluentConfiguration()
-                .dataSource(dataSource)
-                .configuration(props);
-        flyway = new Flyway(configuration);
+        giftCertificateRepository = TestEnvironment.getGiftCertificateRepository();
+        flyway = TestEnvironment.getFlyway();
     }
 
     @BeforeEach

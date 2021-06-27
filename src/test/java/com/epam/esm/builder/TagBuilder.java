@@ -1,8 +1,8 @@
-package com.epam.esm.repository;
+package com.epam.esm.builder;
 
 import com.epam.esm.entity.Tag;
 
-public class TagBuilder implements Cloneable{
+public class TagBuilder implements Cloneable {
 
     public final static int EXIST_TAG_ID = 1;
     public final static int NOT_EXIST_TAG_ID = 11;

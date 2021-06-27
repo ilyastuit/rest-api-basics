@@ -54,6 +54,11 @@ jacocoTestReport {
         csv.required = false
         html.outputLocation = layout.buildDirectory.dir('reports/tests/coverage/')
     }
+    classDirectories.setFrom(
+            fileTree(dir: "build/classes/java/main/com/epam/esm")
+                    .filter({ file -> !file.path.contains('/config') })
+                    .filter({ file -> !file.path.contains('/api') })
+    )
 }
 
 war {

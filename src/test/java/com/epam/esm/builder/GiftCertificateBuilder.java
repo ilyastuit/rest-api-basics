@@ -1,4 +1,4 @@
-package com.epam.esm.repository;
+package com.epam.esm.builder;
 
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
