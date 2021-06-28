@@ -4,7 +4,7 @@ restart-app: build-app restart-tomcat
 init: build-app docker-build migrate
 
 build-app:
-	./gradlew clean build --stacktrace
+	./gradlew clean build --stacktrace -x test
 
 docker-build:
 	docker-compose build

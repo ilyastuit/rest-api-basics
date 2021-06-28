@@ -1,0 +1,15 @@
+group 'com.epam.esm.api'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'war'
+
+war {
+    archiveName 'rest-api-basics.war'
+}
+
+dependencies {
+    implementation project(':config')
+    implementation project(':service')
+    implementation project(':repository')
+    implementation project(':entity')
+}
