@@ -4,4 +4,7 @@ version '1.0-SNAPSHOT'
 dependencies {
     implementation project(':entity')
     implementation project(':config')
+
+    testImplementation "org.flywaydb:flyway-core:7.10.0"
+    testImplementation 'org.flywaydb.flyway-test-extensions:flyway-test:7.0.0'
 }

@@ -6,6 +6,8 @@ services:
       context: ./
       dockerfile: ./docker/tomcat/Dockerfile
     container_name: tomcat
+    environment:
+      JAVA_OPTS: -Dspring.profiles.active=dev
     links:
       - postgres
       - postgres-test

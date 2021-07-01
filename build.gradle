@@ -1,31 +1,12 @@
 group 'com.epam.esm'
 version '1.0-SNAPSHOT'
 
-def props = new Properties()
-file("./config/src/main/resources/application.properties").withInputStream { props.load(it) }
-
-if (props.getProperty("spring.profiles.active") == "dev") {
-    file("./config/src/main/resources/application-dev.properties").withInputStream { props.load(it) }
-}
-
-buildscript {
-    repositories {
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-    dependencies {
-        classpath "gradle.plugin.org.flywaydb:gradle-plugin-publishing:7.10.0"
-    }
-}
-
 allprojects {
     ext {
         springVersion = '5.3.8'
     }
 
     apply plugin: 'java'
-    apply plugin: "org.flywaydb.flyway"
     apply plugin: 'jacoco'
 
     repositories {
@@ -47,10 +28,8 @@ allprojects {
         implementation 'org.apache.logging.log4j:log4j-api:2.14.1'
         implementation 'org.apache.logging.log4j:log4j-core:2.14.1'
 
-        testImplementation "org.flywaydb:flyway-core:7.10.0"
         testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
         testImplementation 'org.mockito:mockito-core:3.11.1'
-        testImplementation 'org.flywaydb.flyway-test-extensions:flyway-test:7.0.0'
     }
 
     test {
@@ -70,16 +49,6 @@ allprojects {
                         .filter({ file -> !file.path.contains('/config') })
                         .filter({ file -> !file.path.contains('/api') })
         )
-    }
-
-    flyway {
-        driver = props.getProperty("datasource.driver")
-        url = props.getProperty("datasource.url-flyway")
-        user = props.getProperty("datasource.username")
-        password = props.getProperty("datasource.password")
-
-        schemas = ['gifts']
-        locations = ['classpath:db/migrations']
     }
 
     jar {
