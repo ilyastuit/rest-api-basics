@@ -1,9 +1,10 @@
 package com.epam.esm.api.v1;
 
+import com.epam.esm.entity.giftcertificate.GiftCertificateDTO;
 import com.epam.esm.service.error.ErrorCode;
 import com.epam.esm.service.error.HttpError;
 import com.epam.esm.service.error.HttpErrorImpl;
-import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.service.exceptions.DataBaseException;
 import com.epam.esm.service.giftcertificate.validation.GiftCertificateValidationErrors;
 import com.epam.esm.service.giftcertificate.GiftCertificateService;
 import com.epam.esm.service.ValidatorUtil;
@@ -40,9 +41,9 @@ public class GiftCertificateController {
      * @return List of all GiftCertificates.
      */
     @GetMapping(value = "/")
-    public ResponseEntity<?> all(@RequestParam("tags") Optional<String> tags,
-                                 @RequestParam("date") Optional<String> date,
-                                 @RequestParam("name") Optional<String> name) {
+    public ResponseEntity<List<GiftCertificateDTO>> all(@RequestParam("tags") Optional<String> tags,
+                                                  @RequestParam("date") Optional<String> date,
+                                                  @RequestParam("name") Optional<String> name) {
 
         return new ResponseEntity<>(this.giftCertificateService.getAll(tags, date, name), HttpStatus.OK);
     }
@@ -99,8 +100,7 @@ public class GiftCertificateController {
      * @return Id of created GiftCertificate.
      */
     @PostMapping(value = "/create")
-    public ResponseEntity<?> create(@RequestBody GiftCertificate giftCertificate) {
-
+    public ResponseEntity<?> create(@RequestBody GiftCertificateDTO giftCertificate) throws DataBaseException {
         final BindingResult bindingResult = ValidatorUtil.validate(giftCertificate, this.giftCertificateValidator);
 
         if (bindingResult.hasErrors()) {
@@ -120,7 +120,7 @@ public class GiftCertificateController {
      * @return Id of updated GiftCertificate.
      */
     @PatchMapping(value = "/{id}")
-    public ResponseEntity<?> update(@PathVariable("id") int id, @RequestBody GiftCertificate giftCertificate) {
+    public ResponseEntity<?> update(@PathVariable("id") int id, @RequestBody GiftCertificateDTO giftCertificate) {
 
         if (!this.giftCertificateService.isExistById(id)) {
             HttpError httpError = new HttpErrorImpl(HttpStatus.NOT_FOUND, "GiftCertificate with id = " + id + " is not found.", ErrorCode.GiftCertificate);
@@ -134,10 +134,10 @@ public class GiftCertificateController {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
 
-        GiftCertificate result = null;
+        GiftCertificateDTO result = null;
         try {
             result = this.giftCertificateService.getOne(this.giftCertificateService.update(id, giftCertificate), true);
-        } catch (NotFoundException exception) {
+        } catch (NotFoundException | DataBaseException exception) {
             HttpError httpError = new HttpErrorImpl(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), ErrorCode.GiftCertificate);
             return new ResponseEntity<>(httpError, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -153,6 +153,20 @@ public class GiftCertificateController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") int id) {
         this.giftCertificateService.delete(id);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * Assign Tag to GiftCertificate.
+     *
+     * @param giftId Id of GiftCertificate to assign
+     * @param tagId Id of Tag to be assigned
+     * @return null
+     */
+    @PutMapping("/{giftId}/tags/{tagId}")
+    public ResponseEntity<?> assignTag(@PathVariable("giftId") int giftId, @PathVariable("tagId") int tagId) {
+        this.giftCertificateService.assignTagToCertificate(giftId, tagId);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -1,7 +1,7 @@
 package com.epam.esm.builder;
 
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.giftcertificate.GiftCertificate;
+import com.epam.esm.entity.tag.Tag;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import java.math.BigDecimal;

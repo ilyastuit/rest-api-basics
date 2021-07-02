@@ -1,6 +1,6 @@
 package com.epam.esm.builder;
 
-import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.tag.Tag;
 
 public class TagBuilder implements Cloneable {
 

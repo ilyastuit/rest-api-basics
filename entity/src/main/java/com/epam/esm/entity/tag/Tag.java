@@ -1,12 +1,9 @@
-package com.epam.esm.entity;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
+package com.epam.esm.entity.tag;
 
 import java.util.Objects;
 
 public class Tag {
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Integer id;
     private String name;
 

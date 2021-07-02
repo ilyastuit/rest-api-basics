@@ -3,8 +3,8 @@ package com.epam.esm.repository;
 import com.epam.esm.builder.GiftCertificateBuilder;
 import com.epam.esm.builder.TagBuilder;
 import com.epam.esm.TestEnvironment;
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.giftcertificate.GiftCertificate;
+import com.epam.esm.entity.tag.Tag;
 
 import com.epam.esm.repository.giftcertificate.GiftCertificateRepository;
 import org.flywaydb.core.Flyway;

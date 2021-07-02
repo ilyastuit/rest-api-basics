@@ -1,9 +1,7 @@
 package com.epam.esm.repository.giftcertificate;
 
-import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.giftcertificate.GiftCertificate;
 import com.epam.esm.repository.tag.TagRepository;
-import com.epam.esm.repository.exceptions.TagNameAlreadyExistException;
-import com.epam.esm.entity.Tag;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -139,35 +137,11 @@ public class GiftCertificateRepository {
             namedParameterJdbcTemplate.update(SQL, params, keyHolder, new String[] {"id"});
             return null;
         });
-        int certificateId = keyHolder.getKey().intValue();
-        updateTags(params, certificateId);
 
-        return certificateId;
-    }
-
-    private void updateTags(MapSqlParameterSource params, int certificateId) {
-        try {
-            List<Tag> tags = (List<Tag>) params.getValue("tags");
-            for (Tag tag: tags) {
-                int tagId;
-                if (checkEmpty(this.tagRepository.findByName(tag.getName()))) {
-                    tagId = this.tagRepository.save(tag);
-                } else {
-                    tagId = this.tagRepository.findByName(tag.getName()).get(0).getId();
-                }
-                if (checkEmpty(this.tagRepository.findAssignedTagToCertificate(certificateId, tagId))) {
-                    this.tagRepository.assignTagToGiftCertificate(certificateId, tagId);
-                }
-            }
-        } catch (TagNameAlreadyExistException ignored) {
-        }
+        return keyHolder.getKey().intValue();
     }
 
     private String prepareText(String text) {
         return "%" + text + "%";
-    }
-
-    private boolean checkEmpty(List<Tag> tags) {
-        return tags.stream().findAny().orElse(null) == null;
     }
 }

@@ -1,4 +1,4 @@
-package com.epam.esm.repository.exceptions;
+package com.epam.esm.service.exceptions;
 
 public class TagNameAlreadyExistException extends Exception{
 

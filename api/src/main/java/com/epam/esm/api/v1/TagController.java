@@ -1,7 +1,7 @@
 package com.epam.esm.api.v1;
 
-import com.epam.esm.entity.Tag;
-import com.epam.esm.repository.exceptions.TagNameAlreadyExistException;
+import com.epam.esm.entity.tag.TagDTO;
+import com.epam.esm.service.exceptions.TagNameAlreadyExistException;
 import com.epam.esm.service.error.ErrorCode;
 import com.epam.esm.service.error.HttpError;
 import com.epam.esm.service.error.HttpErrorImpl;
@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Rest Api Controller for Tags.
@@ -36,7 +38,7 @@ public class TagController {
      * @return List of all Tags.
      */
     @GetMapping("/")
-    public ResponseEntity<?> all() {
+    public ResponseEntity<List<TagDTO>> all() {
         return new ResponseEntity<>(this.tagService.getAll(), HttpStatus.OK);
     }
 
@@ -60,12 +62,12 @@ public class TagController {
      * Create new Tag.
      * Values should pass validation otherwise Bad Request will be returned.
      *
-     * @param tag Tag values
+     * @param tagDto Tag values
      * @return Id of created Tag.
      */
     @PostMapping("/")
-    public ResponseEntity<?> create(@RequestBody Tag tag) {
-        final BindingResult bindingResult = ValidatorUtil.validate(tag, this.tagValidator);
+    public ResponseEntity<?> create(@RequestBody TagDTO tagDto) {
+        final BindingResult bindingResult = ValidatorUtil.validate(tagDto, this.tagValidator);
 
         if (bindingResult.hasErrors()) {
             TagValidationErrors result = new TagValidationErrors(HttpStatus.BAD_REQUEST, TagValidationErrors.DEFAULT_ERROR_MESSAGE, ValidatorUtil.getErrors(bindingResult));
@@ -73,7 +75,7 @@ public class TagController {
         }
 
         try {
-            return new ResponseEntity<>(this.tagService.save(tag), HttpStatus.CREATED);
+            return new ResponseEntity<>(this.tagService.save(tagDto), HttpStatus.CREATED);
         } catch (TagNameAlreadyExistException exception) {
             HttpError httpError = new HttpErrorImpl(HttpStatus.BAD_REQUEST, exception.getMessage(), ErrorCode.Tag);
             return new ResponseEntity<>(httpError, HttpStatus.BAD_REQUEST);

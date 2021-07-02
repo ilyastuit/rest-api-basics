@@ -1,9 +1,16 @@
 package com.epam.esm.service.giftcertificate;
 
-import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.giftcertificate.GiftCertificate;
+import com.epam.esm.entity.giftcertificate.GiftCertificateDTO;
+import com.epam.esm.entity.tag.Tag;
+import com.epam.esm.entity.tag.TagDTO;
+import com.epam.esm.service.exceptions.TagNameAlreadyExistException;
 import com.epam.esm.repository.giftcertificate.GiftCertificateRepository;
 import com.epam.esm.service.ValidatorUtil;
+import com.epam.esm.service.exceptions.DataBaseException;
 import com.epam.esm.service.exceptions.NotFoundException;
+import com.epam.esm.service.tag.TagDTOMapper;
+import com.epam.esm.service.tag.TagService;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Service;
 
@@ -14,46 +21,69 @@ import java.util.Optional;
 
 @Service
 public class GiftCertificateService {
-    private final GiftCertificateRepository certificateRepository;
 
-    public GiftCertificateService(GiftCertificateRepository certificateRepository) {
+    private final GiftCertificateRepository certificateRepository;
+    private final TagService tagService;
+    private final GiftCertificateDTOMapper dtoMapper;
+    private final TagDTOMapper tagDTOMapper;
+
+    public GiftCertificateService(GiftCertificateRepository certificateRepository, TagService tagService, GiftCertificateDTOMapper dtoMapper, TagDTOMapper tagDTOMapper) {
         this.certificateRepository = certificateRepository;
+        this.tagService = tagService;
+        this.dtoMapper = dtoMapper;
+        this.tagDTOMapper = tagDTOMapper;
     }
 
-    public int save(GiftCertificate giftCertificate) {
+    public int save(GiftCertificateDTO giftCertificateDTO) throws DataBaseException {
+        GiftCertificate giftCertificate = dtoMapper.giftCertificateDTOToGiftCertificate(giftCertificateDTO);
+
         giftCertificate.setCreateDate(LocalDateTime.now());
 
         MapSqlParameterSource params = prepareParams(giftCertificate);
         params.addValue("create_date", Timestamp.valueOf(giftCertificate.getCreateDate()));
 
-        return this.certificateRepository.save(params);
+        int id = this.certificateRepository.save(params);
+        this.updateTags(id, giftCertificate.getTags());
+        return id;
     }
 
-    public int update(int id, GiftCertificate giftCertificate) {
+    public int update(int id, GiftCertificateDTO giftCertificateDTO) throws DataBaseException {
+        GiftCertificate giftCertificate = dtoMapper.giftCertificateDTOToGiftCertificate(giftCertificateDTO);
+
+        this.updateTags(id, giftCertificate.getTags());
         return this.certificateRepository.update(id, prepareParams(giftCertificate));
     }
 
     public boolean isExistById(int id) {
-        try {
-            getFromList(this.certificateRepository.findById(id), id);
-            return true;
-        } catch (NotFoundException exception) {
-            return false;
-        }
+        return getFromList(this.certificateRepository.findById(id)) != null;
     }
 
-    public GiftCertificate getOne(int id, boolean withTags) throws NotFoundException {
+    public GiftCertificateDTO getOne(int id, boolean withTags) throws NotFoundException {
+        GiftCertificate giftCertificate = null;
         if (withTags) {
-            return getFromList(this.certificateRepository.findByIdWithTags(id), id);
+            giftCertificate = getFromList(this.certificateRepository.findByIdWithTags(id));
+        } else {
+            giftCertificate = getFromList(this.certificateRepository.findById(id));
         }
-        return getFromList(this.certificateRepository.findById(id), id);
+
+        if (giftCertificate == null) {
+            throw new NotFoundException("GiftCertificate is not found (id = " + id + ")");
+        }
+
+        return dtoMapper.giftCertificateToGiftCertificateDTO(giftCertificate);
     }
 
-    public GiftCertificate getOneWithTags(int id) throws NotFoundException {
-        return getFromList(this.certificateRepository.findByIdWithTags(id), id);
+    public GiftCertificateDTO getOneWithTags(int id) throws NotFoundException {
+        GiftCertificate giftCertificate = getFromList(this.certificateRepository.findByIdWithTags(id));
+
+        if (giftCertificate == null) {
+            throw new NotFoundException("GiftCertificate is not found (id = " + id + ")");
+        }
+
+        return dtoMapper.giftCertificateToGiftCertificateDTO(giftCertificate);
     }
 
-    public List<GiftCertificate> getAll(Optional<String> tags, Optional<String> date, Optional<String> name) {
+    public List<GiftCertificateDTO> getAll(Optional<String> tags, Optional<String> date, Optional<String> name) {
         boolean withTags = ValidatorUtil.isValidBoolean(tags);
         boolean sortByDate = ValidatorUtil.isValidSort(date);
         boolean sortByName = ValidatorUtil.isValidSort(name);
@@ -68,42 +98,57 @@ public class GiftCertificateService {
             if (withTags) {
                 return this.getAllWithTags();
             }
-            return this.certificateRepository.findAll();
+            return this.getAll();
         }
     }
 
+    public List<GiftCertificateDTO> getAll() {
+        return dtoMapper.giftCertificateListToGiftCertificateDTOList(this.certificateRepository.findAll());
+    }
 
-    public List<GiftCertificate> getAllSortByDate(boolean withTags, String date) {
+    public List<GiftCertificateDTO> getAllSortByDate(boolean withTags, String date) {
+        List<GiftCertificate> list = null;
         if (withTags) {
-            return this.certificateRepository.findAllWithTagsOrderByDate(date);
+            list = this.certificateRepository.findAllWithTagsOrderByDate(date);
+        } else {
+            list = this.certificateRepository.findAllOrderByDate(date);
         }
-        return this.certificateRepository.findAllOrderByDate(date);
+
+        return dtoMapper.giftCertificateListToGiftCertificateDTOList(list);
     }
 
 
-    public List<GiftCertificate> getAllSortByName(boolean withTags, String name) {
+    public List<GiftCertificateDTO> getAllSortByName(boolean withTags, String name) {
+        List<GiftCertificate> list = null;
         if (withTags) {
-            return this.certificateRepository.findAllWithTagsOrderByName(name);
+            list = this.certificateRepository.findAllWithTagsOrderByName(name);
+        } else {
+            list = this.certificateRepository.findAllOrderByName(name);
         }
-        return this.certificateRepository.findAllOrderByName(name);
+
+        return dtoMapper.giftCertificateListToGiftCertificateDTOList(list);
     }
 
-    public List<GiftCertificate> getAllSortByDateAndByName(boolean withTags, String date, String name) {
+    public List<GiftCertificateDTO> getAllSortByDateAndByName(boolean withTags, String date, String name) {
+        List<GiftCertificate> list = null;
         if (withTags) {
-            return this.certificateRepository.findAllWithTagsOrderByDateAndByName(date, name);
+            list = this.certificateRepository.findAllWithTagsOrderByDateAndByName(date, name);
+        } else {
+            list = this.certificateRepository.findAllOrderByDateAndByName(date, name);
         }
-        return this.certificateRepository.findAllOrderByDateAndByName(date, name);
+
+        return dtoMapper.giftCertificateListToGiftCertificateDTOList(list);
     }
 
-    public List<GiftCertificate> getAllWithTags() {
-        return this.certificateRepository.findAllWithTags();
+    public List<GiftCertificateDTO> getAllWithTags() {
+        return dtoMapper.giftCertificateListToGiftCertificateDTOList(this.certificateRepository.findAllWithTags());
     }
 
-    public List<GiftCertificate> getAllByTagName(String tagName) {
-        return this.certificateRepository.findAllWithTagsByTagName(tagName);
+    public List<GiftCertificateDTO> getAllByTagName(String tagName) {
+        return dtoMapper.giftCertificateListToGiftCertificateDTOList(this.certificateRepository.findAllWithTagsByTagName(tagName));
     }
 
-    public List<GiftCertificate> getAllByNameOrDescription(String text, Optional<String> date, Optional<String> name) {
+    public List<GiftCertificateDTO> getAllByNameOrDescription(String text, Optional<String> date, Optional<String> name) {
         boolean sortByDate = ValidatorUtil.isValidSort(date);
         boolean sortByName = ValidatorUtil.isValidSort(name);
 
@@ -114,32 +159,58 @@ public class GiftCertificateService {
         } else if (sortByDate && sortByName) {
             return this.getAllByNameOrDescriptionSortByDateAndByName(text, date.get(), name.get());
         } else {
-            return certificateRepository.findAllByNameOrDescription(text);
+            return dtoMapper.giftCertificateListToGiftCertificateDTOList(certificateRepository.findAllByNameOrDescription(text));
         }
     }
 
-    private List<GiftCertificate> getAllByNameOrDescriptionSortByDateAndByName(String text, String date, String name) {
-        return this.certificateRepository.findAllByNameOrDescriptionOrderByDateAndName(text, date, name);
+    private List<GiftCertificateDTO> getAllByNameOrDescriptionSortByDateAndByName(String text, String date, String name) {
+        return dtoMapper.giftCertificateListToGiftCertificateDTOList(this.certificateRepository.findAllByNameOrDescriptionOrderByDateAndName(text, date, name));
     }
 
-    private List<GiftCertificate> getAllByNameOrDescriptionSortByName(String text, String name) {
-        return this.certificateRepository.findAllByNameOrDescriptionOrderByName(text, name);
+    private List<GiftCertificateDTO> getAllByNameOrDescriptionSortByName(String text, String name) {
+        return dtoMapper.giftCertificateListToGiftCertificateDTOList(this.certificateRepository.findAllByNameOrDescriptionOrderByName(text, name));
     }
 
-    private List<GiftCertificate> getAllByNameOrDescriptionSortByDate(String text, String date) {
-        return this.certificateRepository.findAllByNameOrDescriptionOrderByDate(text, date);
+    private List<GiftCertificateDTO> getAllByNameOrDescriptionSortByDate(String text, String date) {
+        return dtoMapper.giftCertificateListToGiftCertificateDTOList(this.certificateRepository.findAllByNameOrDescriptionOrderByDate(text, date));
     }
 
-    public List<GiftCertificate> getAllByNameOrDescriptionWithTags(String text) {
-        return this.certificateRepository.findAllWithTagsByNameOrDescription(text);
-    }
-
-    private GiftCertificate getFromList(List<GiftCertificate> certificateList, int id) throws NotFoundException {
-        return certificateList.stream().findAny().orElseThrow(() -> new NotFoundException("GiftCertificate is not found (id = " + id + ")"));
+    public List<GiftCertificateDTO> getAllByNameOrDescriptionWithTags(String text) {
+        return dtoMapper.giftCertificateListToGiftCertificateDTOList(this.certificateRepository.findAllWithTagsByNameOrDescription(text));
     }
 
     public void delete(int id) {
         this.certificateRepository.deleteById(id);
+    }
+
+    private void updateTags(int certificateId, List<Tag> tags) throws DataBaseException {
+        List<TagDTO> tagDTOList = tagDTOMapper.map(tags);
+        try {
+            for (TagDTO tagDTO: tagDTOList) {
+                int tagId;
+                if (!this.tagService.isExistByName(tagDTO.getName())) {
+                    tagId = this.tagService.save(tagDTO);
+                } else {
+                    tagId = this.tagService.getByName(tagDTO.getName()).getId();
+                }
+                if (!this.tagService.isTagAlreadyAssignedToGiftCertificate(certificateId, tagId)) {
+                    this.tagService.assignTagToGiftCertificate(certificateId, tagId);
+                }
+            }
+        } catch (TagNameAlreadyExistException exception) {
+            throw new DataBaseException(exception.getMessage());
+        } catch (NotFoundException ignored) {
+        }
+    }
+
+    public void assignTagToCertificate(int certificateId, int tagId) {
+        if (!this.tagService.isTagAlreadyAssignedToGiftCertificate(certificateId, tagId)) {
+            this.tagService.assignTagToGiftCertificate(certificateId, tagId);
+        }
+    }
+
+    private GiftCertificate getFromList(List<GiftCertificate> certificateList) {
+        return certificateList.stream().findAny().orElse(null);
     }
 
     private MapSqlParameterSource prepareParams(GiftCertificate giftCertificate) {
