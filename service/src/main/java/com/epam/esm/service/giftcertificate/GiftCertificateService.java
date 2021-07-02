@@ -4,11 +4,11 @@ import com.epam.esm.entity.giftcertificate.GiftCertificate;
 import com.epam.esm.entity.giftcertificate.GiftCertificateDTO;
 import com.epam.esm.entity.tag.Tag;
 import com.epam.esm.entity.tag.TagDTO;
+import com.epam.esm.service.exceptions.GiftCertificateNotFoundException;
 import com.epam.esm.service.exceptions.TagNameAlreadyExistException;
 import com.epam.esm.repository.giftcertificate.GiftCertificateRepository;
 import com.epam.esm.service.ValidatorUtil;
-import com.epam.esm.service.exceptions.DataBaseException;
-import com.epam.esm.service.exceptions.NotFoundException;
+import com.epam.esm.service.exceptions.TagNotFoundException;
 import com.epam.esm.service.tag.TagDTOMapper;
 import com.epam.esm.service.tag.TagService;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -34,7 +34,7 @@ public class GiftCertificateService {
         this.tagDTOMapper = tagDTOMapper;
     }
 
-    public int save(GiftCertificateDTO giftCertificateDTO) throws DataBaseException {
+    public int save(GiftCertificateDTO giftCertificateDTO) throws TagNameAlreadyExistException {
         GiftCertificate giftCertificate = dtoMapper.giftCertificateDTOToGiftCertificate(giftCertificateDTO);
 
         giftCertificate.setCreateDate(LocalDateTime.now());
@@ -47,7 +47,7 @@ public class GiftCertificateService {
         return id;
     }
 
-    public int update(int id, GiftCertificateDTO giftCertificateDTO) throws DataBaseException {
+    public int update(int id, GiftCertificateDTO giftCertificateDTO) throws TagNameAlreadyExistException {
         GiftCertificate giftCertificate = dtoMapper.giftCertificateDTOToGiftCertificate(giftCertificateDTO);
 
         this.updateTags(id, giftCertificate.getTags());
@@ -58,7 +58,7 @@ public class GiftCertificateService {
         return getFromList(this.certificateRepository.findById(id)) != null;
     }
 
-    public GiftCertificateDTO getOne(int id, boolean withTags) throws NotFoundException {
+    public GiftCertificateDTO getOne(int id, boolean withTags) throws GiftCertificateNotFoundException {
         GiftCertificate giftCertificate = null;
         if (withTags) {
             giftCertificate = getFromList(this.certificateRepository.findByIdWithTags(id));
@@ -67,17 +67,17 @@ public class GiftCertificateService {
         }
 
         if (giftCertificate == null) {
-            throw new NotFoundException("GiftCertificate is not found (id = " + id + ")");
+            throw new GiftCertificateNotFoundException(id);
         }
 
         return dtoMapper.giftCertificateToGiftCertificateDTO(giftCertificate);
     }
 
-    public GiftCertificateDTO getOneWithTags(int id) throws NotFoundException {
+    public GiftCertificateDTO getOneWithTags(int id) throws GiftCertificateNotFoundException {
         GiftCertificate giftCertificate = getFromList(this.certificateRepository.findByIdWithTags(id));
 
         if (giftCertificate == null) {
-            throw new NotFoundException("GiftCertificate is not found (id = " + id + ")");
+            throw new GiftCertificateNotFoundException(id);
         }
 
         return dtoMapper.giftCertificateToGiftCertificateDTO(giftCertificate);
@@ -183,7 +183,7 @@ public class GiftCertificateService {
         this.certificateRepository.deleteById(id);
     }
 
-    private void updateTags(int certificateId, List<Tag> tags) throws DataBaseException {
+    private void updateTags(int certificateId, List<Tag> tags) throws TagNameAlreadyExistException {
         List<TagDTO> tagDTOList = tagDTOMapper.map(tags);
         try {
             for (TagDTO tagDTO: tagDTOList) {
@@ -197,9 +197,7 @@ public class GiftCertificateService {
                     this.tagService.assignTagToGiftCertificate(certificateId, tagId);
                 }
             }
-        } catch (TagNameAlreadyExistException exception) {
-            throw new DataBaseException(exception.getMessage());
-        } catch (NotFoundException ignored) {
+        } catch (TagNotFoundException ignored) {
         }
     }
 

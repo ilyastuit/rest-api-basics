@@ -1,14 +1,12 @@
 package com.epam.esm.api.v1;
 
 import com.epam.esm.entity.giftcertificate.GiftCertificateDTO;
-import com.epam.esm.service.error.ErrorCode;
-import com.epam.esm.service.error.HttpError;
-import com.epam.esm.service.error.HttpErrorImpl;
-import com.epam.esm.service.exceptions.DataBaseException;
+import com.epam.esm.service.exceptions.GiftCertificateNotFoundException;
+import com.epam.esm.service.exceptions.GiftCertificateSearchParameterNotProvidedException;
+import com.epam.esm.service.exceptions.TagNameAlreadyExistException;
 import com.epam.esm.service.giftcertificate.validation.GiftCertificateValidationErrors;
 import com.epam.esm.service.giftcertificate.GiftCertificateService;
 import com.epam.esm.service.ValidatorUtil;
-import com.epam.esm.service.exceptions.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.*;
@@ -56,15 +54,10 @@ public class GiftCertificateController {
      * @return One GiftCertificate or Not Found if not.
      */
     @GetMapping(value = "/{id}")
-    public ResponseEntity<?> one(@PathVariable("id") int id, @RequestParam("tags") Optional<String> tags) {
+    public ResponseEntity<?> one(@PathVariable("id") int id, @RequestParam("tags") Optional<String> tags) throws GiftCertificateNotFoundException {
         boolean withTags = ValidatorUtil.isValidBoolean(tags);
 
-        try {
-            return new ResponseEntity<>(this.giftCertificateService.getOne(id, withTags), HttpStatus.OK);
-        } catch (NotFoundException exception) {
-            HttpError httpError = new HttpErrorImpl(HttpStatus.NOT_FOUND, exception.getMessage(), ErrorCode.GiftCertificate);
-            return new ResponseEntity<>(httpError, HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(this.giftCertificateService.getOne(id, withTags), HttpStatus.OK);
     }
 
     /**
@@ -82,14 +75,13 @@ public class GiftCertificateController {
     public ResponseEntity<?> search(@RequestParam("q") Optional<String> q,
                                     @RequestParam("tag") Optional<String> tag,
                                     @RequestParam("date") Optional<String> date,
-                                    @RequestParam("name") Optional<String> name) {
+                                    @RequestParam("name") Optional<String> name) throws GiftCertificateSearchParameterNotProvidedException {
         if (q.isPresent()) {
             return new ResponseEntity<>(this.giftCertificateService.getAllByNameOrDescription(q.get(), date, name), HttpStatus.OK);
         } else if(tag.isPresent()) {
             return new ResponseEntity<>(this.giftCertificateService.getAllByTagName(tag.get()), HttpStatus.OK);
         }
-        HttpError httpError = new HttpErrorImpl(HttpStatus.BAD_REQUEST, "Please provide the search parameter <q> or <tag>", ErrorCode.GiftCertificate);
-        return new ResponseEntity<>(httpError, HttpStatus.BAD_REQUEST);
+        throw new GiftCertificateSearchParameterNotProvidedException();
     }
 
     /**
@@ -100,7 +92,7 @@ public class GiftCertificateController {
      * @return Id of created GiftCertificate.
      */
     @PostMapping(value = "/create")
-    public ResponseEntity<?> create(@RequestBody GiftCertificateDTO giftCertificate) throws DataBaseException {
+    public ResponseEntity<?> create(@RequestBody GiftCertificateDTO giftCertificate) throws TagNameAlreadyExistException {
         final BindingResult bindingResult = ValidatorUtil.validate(giftCertificate, this.giftCertificateValidator);
 
         if (bindingResult.hasErrors()) {
@@ -120,11 +112,10 @@ public class GiftCertificateController {
      * @return Id of updated GiftCertificate.
      */
     @PatchMapping(value = "/{id}")
-    public ResponseEntity<?> update(@PathVariable("id") int id, @RequestBody GiftCertificateDTO giftCertificate) {
+    public ResponseEntity<?> update(@PathVariable("id") int id, @RequestBody GiftCertificateDTO giftCertificate) throws GiftCertificateNotFoundException, TagNameAlreadyExistException {
 
         if (!this.giftCertificateService.isExistById(id)) {
-            HttpError httpError = new HttpErrorImpl(HttpStatus.NOT_FOUND, "GiftCertificate with id = " + id + " is not found.", ErrorCode.GiftCertificate);
-            return new ResponseEntity<>(httpError, HttpStatus.NOT_FOUND);
+            throw new GiftCertificateNotFoundException(id);
         }
 
         final BindingResult bindingResult = ValidatorUtil.validate(giftCertificate, this.giftCertificateValidator);
@@ -134,13 +125,7 @@ public class GiftCertificateController {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
 
-        GiftCertificateDTO result = null;
-        try {
-            result = this.giftCertificateService.getOne(this.giftCertificateService.update(id, giftCertificate), true);
-        } catch (NotFoundException | DataBaseException exception) {
-            HttpError httpError = new HttpErrorImpl(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), ErrorCode.GiftCertificate);
-            return new ResponseEntity<>(httpError, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        GiftCertificateDTO result = this.giftCertificateService.getOne(this.giftCertificateService.update(id, giftCertificate), true);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -148,13 +133,11 @@ public class GiftCertificateController {
      * Delete GiftCertificate by id.
      *
      * @param id Id of GiftCertificate to delete
-     * @return null
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable("id") int id) {
+    @ResponseStatus(HttpStatus.OK)
+    public void delete(@PathVariable("id") int id) {
         this.giftCertificateService.delete(id);
-
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**
@@ -162,12 +145,10 @@ public class GiftCertificateController {
      *
      * @param giftId Id of GiftCertificate to assign
      * @param tagId Id of Tag to be assigned
-     * @return null
      */
     @PutMapping("/{giftId}/tags/{tagId}")
-    public ResponseEntity<?> assignTag(@PathVariable("giftId") int giftId, @PathVariable("tagId") int tagId) {
+    @ResponseStatus(HttpStatus.OK)
+    public void assignTag(@PathVariable("giftId") int giftId, @PathVariable("tagId") int tagId) {
         this.giftCertificateService.assignTagToCertificate(giftId, tagId);
-
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

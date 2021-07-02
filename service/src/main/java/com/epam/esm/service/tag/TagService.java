@@ -4,7 +4,7 @@ import com.epam.esm.entity.tag.Tag;
 import com.epam.esm.entity.tag.TagDTO;
 import com.epam.esm.repository.tag.TagRepository;
 import com.epam.esm.service.exceptions.TagNameAlreadyExistException;
-import com.epam.esm.service.exceptions.NotFoundException;
+import com.epam.esm.service.exceptions.TagNotFoundException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +21,11 @@ public class TagService {
         this.dtoMapper = dtoMapper;
     }
 
-    public TagDTO getById(int id) throws NotFoundException {
+    public TagDTO getById(int id) throws TagNotFoundException {
         Tag tag = getFromList(this.repository.findById(id));
 
         if (tag == null) {
-            throw new NotFoundException("Tag is not found (id = " + id + ")");
+            throw new TagNotFoundException(id);
         }
         return dtoMapper.tagToDTO(tag);
     }
@@ -43,13 +43,13 @@ public class TagService {
         try {
             id = this.repository.save(dtoMapper.dtoToTag(tagDTO));
         } catch (DuplicateKeyException exception) {
-            throw new TagNameAlreadyExistException(exception.getMessage());
+            throw new TagNameAlreadyExistException(tagDTO.getName());
         }
 
         return id;
     }
 
-    public List<TagDTO> getByGiftCertificateId(Integer certificateId) {
+    public List<TagDTO> getAllByGiftCertificateId(Integer certificateId) {
         return dtoMapper.map(this.repository.findByGiftCertificateId(certificateId));
     }
 
@@ -57,11 +57,11 @@ public class TagService {
         return getFromList(this.repository.findByName(name)) != null;
     }
 
-    public TagDTO getByName(String name) throws NotFoundException {
+    public TagDTO getByName(String name) throws TagNotFoundException {
         Tag tag = getFromList(this.repository.findByName(name));
 
         if (tag == null) {
-            throw new NotFoundException("Tag is not found (name = " + name + ")");
+            throw new TagNotFoundException(name);
         }
 
         return dtoMapper.tagToDTO(tag);

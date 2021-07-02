@@ -2,14 +2,11 @@ package com.epam.esm.api.v1;
 
 import com.epam.esm.entity.tag.TagDTO;
 import com.epam.esm.service.exceptions.TagNameAlreadyExistException;
-import com.epam.esm.service.error.ErrorCode;
-import com.epam.esm.service.error.HttpError;
-import com.epam.esm.service.error.HttpErrorImpl;
+import com.epam.esm.service.exceptions.TagNotFoundException;
 import com.epam.esm.service.tag.validation.TagValidationErrors;
 import com.epam.esm.service.tag.validation.TagValidator;
 import com.epam.esm.service.tag.TagService;
 import com.epam.esm.service.ValidatorUtil;
-import com.epam.esm.service.exceptions.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -49,13 +46,8 @@ public class TagController {
      * @return Found Tag by id.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<?> one(@PathVariable("id") int id) {
-        try {
-            return new ResponseEntity<>(this.tagService.getById(id), HttpStatus.OK);
-        } catch (NotFoundException exception) {
-            HttpError httpError = new HttpErrorImpl(HttpStatus.NOT_FOUND, exception.getMessage(), ErrorCode.Tag);
-            return new ResponseEntity<>(httpError, HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<?> one(@PathVariable("id") int id) throws TagNotFoundException {
+        return new ResponseEntity<>(this.tagService.getById(id), HttpStatus.OK);
     }
 
     /**
@@ -66,7 +58,7 @@ public class TagController {
      * @return Id of created Tag.
      */
     @PostMapping("/")
-    public ResponseEntity<?> create(@RequestBody TagDTO tagDto) {
+    public ResponseEntity<?> create(@RequestBody TagDTO tagDto) throws TagNameAlreadyExistException {
         final BindingResult bindingResult = ValidatorUtil.validate(tagDto, this.tagValidator);
 
         if (bindingResult.hasErrors()) {
@@ -74,24 +66,17 @@ public class TagController {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
 
-        try {
-            return new ResponseEntity<>(this.tagService.save(tagDto), HttpStatus.CREATED);
-        } catch (TagNameAlreadyExistException exception) {
-            HttpError httpError = new HttpErrorImpl(HttpStatus.BAD_REQUEST, exception.getMessage(), ErrorCode.Tag);
-            return new ResponseEntity<>(httpError, HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(this.tagService.save(tagDto), HttpStatus.CREATED);
     }
 
     /**
      * Delete Tag by id.
      *
      * @param id Id of Tag
-     * @return null
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable("id") int id) {
+    @ResponseStatus(HttpStatus.OK)
+    public void delete(@PathVariable("id") int id) {
         this.tagService.deleteById(id);
-
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

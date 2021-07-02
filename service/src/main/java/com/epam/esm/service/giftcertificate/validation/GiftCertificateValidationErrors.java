@@ -22,7 +22,7 @@ public class GiftCertificateValidationErrors implements HttpError {
 
     @Override
     public String getCode() {
-        return getStatus().value() + ErrorCode.GiftCertificate.getCode();
+        return getStatus().value() + ErrorCode.GIFT_CERTIFICATE.getCode();
     }
 
     public HttpStatus getStatus() {

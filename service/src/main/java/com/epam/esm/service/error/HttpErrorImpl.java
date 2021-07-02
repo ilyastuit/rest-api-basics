@@ -12,7 +12,7 @@ public class HttpErrorImpl implements HttpError{
     private final String message;
     private final ErrorCode code;
 
-    public HttpErrorImpl(HttpStatus status, String message, ErrorCode code) {
+    public HttpErrorImpl(String message, HttpStatus status, ErrorCode code) {
         this.status = status;
         this.message = message;
         this.code = code;

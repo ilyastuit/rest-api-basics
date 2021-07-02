@@ -1,0 +1,41 @@
+package com.epam.esm.service.exceptions;
+
+import com.epam.esm.service.error.ErrorCode;
+import com.epam.esm.service.error.HttpError;
+import com.epam.esm.service.error.HttpErrorImpl;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+@ControllerAdvice
+@RestController
+public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
+
+    @ExceptionHandler(TagNotFoundException.class)
+    public ResponseEntity<HttpError> handleTagNotFoundException(TagNotFoundException e, WebRequest request) {
+        HttpError tagNotFoundExceptionResponse = new HttpErrorImpl(e.getMessage(), HttpStatus.NOT_FOUND, ErrorCode.TAG);
+        return new ResponseEntity<>(tagNotFoundExceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(TagNameAlreadyExistException.class)
+    public ResponseEntity<HttpError> handleTagNameAlreadyExistException(TagNameAlreadyExistException e, WebRequest request) {
+        HttpError tagExceptionResponse = new HttpErrorImpl(e.getMessage(), HttpStatus.CONFLICT, ErrorCode.TAG);
+        return new ResponseEntity<>(tagExceptionResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(GiftCertificateNotFoundException.class)
+    public ResponseEntity<HttpError> handleGiftCertificateNotFoundException(GiftCertificateNotFoundException e, WebRequest request) {
+        HttpError giftCertificateNotFound = new HttpErrorImpl(e.getMessage(), HttpStatus.NOT_FOUND, ErrorCode.GIFT_CERTIFICATE);
+        return new ResponseEntity<>(giftCertificateNotFound, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(GiftCertificateSearchParameterNotProvidedException.class)
+    public ResponseEntity<HttpError> handleGiftCertificateSearchProviderNotProvidedException(GiftCertificateSearchParameterNotProvidedException e, WebRequest request) {
+        HttpError giftCertificateSearchProviderNotProvided = new HttpErrorImpl(e.getMessage(), HttpStatus.BAD_REQUEST, ErrorCode.GIFT_CERTIFICATE);
+        return new ResponseEntity<>(giftCertificateSearchProviderNotProvided, HttpStatus.BAD_REQUEST);
+    }
+}
