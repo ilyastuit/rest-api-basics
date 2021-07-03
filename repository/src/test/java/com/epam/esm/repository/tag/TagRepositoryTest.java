@@ -1,4 +1,4 @@
-package com.epam.esm.repository;
+package com.epam.esm.repository.tag;
 
 import static org.junit.jupiter.api.Assertions.*;
 

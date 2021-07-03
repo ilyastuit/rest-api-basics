@@ -18,24 +18,24 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
     @ExceptionHandler(TagNotFoundException.class)
     public ResponseEntity<HttpError> handleTagNotFoundException(TagNotFoundException e, WebRequest request) {
         HttpError tagNotFoundExceptionResponse = new HttpErrorImpl(e.getMessage(), HttpStatus.NOT_FOUND, ErrorCode.TAG);
-        return new ResponseEntity<>(tagNotFoundExceptionResponse, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(tagNotFoundExceptionResponse, tagNotFoundExceptionResponse.getStatus());
     }
 
     @ExceptionHandler(TagNameAlreadyExistException.class)
     public ResponseEntity<HttpError> handleTagNameAlreadyExistException(TagNameAlreadyExistException e, WebRequest request) {
         HttpError tagExceptionResponse = new HttpErrorImpl(e.getMessage(), HttpStatus.CONFLICT, ErrorCode.TAG);
-        return new ResponseEntity<>(tagExceptionResponse, HttpStatus.CONFLICT);
+        return new ResponseEntity<>(tagExceptionResponse, tagExceptionResponse.getStatus());
     }
 
     @ExceptionHandler(GiftCertificateNotFoundException.class)
     public ResponseEntity<HttpError> handleGiftCertificateNotFoundException(GiftCertificateNotFoundException e, WebRequest request) {
         HttpError giftCertificateNotFound = new HttpErrorImpl(e.getMessage(), HttpStatus.NOT_FOUND, ErrorCode.GIFT_CERTIFICATE);
-        return new ResponseEntity<>(giftCertificateNotFound, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(giftCertificateNotFound, giftCertificateNotFound.getStatus());
     }
 
     @ExceptionHandler(GiftCertificateSearchParameterNotProvidedException.class)
     public ResponseEntity<HttpError> handleGiftCertificateSearchProviderNotProvidedException(GiftCertificateSearchParameterNotProvidedException e, WebRequest request) {
         HttpError giftCertificateSearchProviderNotProvided = new HttpErrorImpl(e.getMessage(), HttpStatus.BAD_REQUEST, ErrorCode.GIFT_CERTIFICATE);
-        return new ResponseEntity<>(giftCertificateSearchProviderNotProvided, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(giftCertificateSearchProviderNotProvided, giftCertificateSearchProviderNotProvided.getStatus());
     }
 }

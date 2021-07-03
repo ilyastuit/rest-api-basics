@@ -21,6 +21,17 @@ public class TagService {
         this.dtoMapper = dtoMapper;
     }
 
+    public int save(TagDTO tagDTO) throws TagNameAlreadyExistException {
+        int id = 0;
+        try {
+            id = this.repository.save(dtoMapper.dtoToTag(tagDTO));
+        } catch (DuplicateKeyException exception) {
+            throw new TagNameAlreadyExistException(tagDTO.getName());
+        }
+
+        return id;
+    }
+
     public TagDTO getById(int id) throws TagNotFoundException {
         Tag tag = getFromList(this.repository.findById(id));
 
@@ -36,17 +47,6 @@ public class TagService {
 
     public void deleteById(int id) {
         this.repository.deleteById(id);
-    }
-
-    public int save(TagDTO tagDTO) throws TagNameAlreadyExistException {
-        int id = 0;
-        try {
-            id = this.repository.save(dtoMapper.dtoToTag(tagDTO));
-        } catch (DuplicateKeyException exception) {
-            throw new TagNameAlreadyExistException(tagDTO.getName());
-        }
-
-        return id;
     }
 
     public List<TagDTO> getAllByGiftCertificateId(Integer certificateId) {
@@ -73,6 +73,24 @@ public class TagService {
 
     public void assignTagToGiftCertificate(int certificateId, int tagId) {
         this.repository.assignTagToGiftCertificate(certificateId, tagId);
+    }
+
+    public void updateTags(int certificateId, List<Tag> tags) throws TagNameAlreadyExistException {
+        List<TagDTO> tagDTOList = dtoMapper.map(tags);
+        try {
+            for (TagDTO tagDTO: tagDTOList) {
+                int tagId;
+                if (!this.isExistByName(tagDTO.getName())) {
+                    tagId = this.save(tagDTO);
+                } else {
+                    tagId = this.getByName(tagDTO.getName()).getId();
+                }
+                if (!this.isTagAlreadyAssignedToGiftCertificate(certificateId, tagId)) {
+                    this.assignTagToGiftCertificate(certificateId, tagId);
+                }
+            }
+        } catch (TagNotFoundException ignored) {
+        }
     }
 
     private Tag getFromList(List<Tag> tags) {
