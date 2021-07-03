@@ -57,6 +57,7 @@ allprojects {
                 fileTree(dir: "build/classes/java/main/com/epam/esm")
                         .filter({ file -> !file.path.contains('/config') })
                         .filter({ file -> !file.path.contains('/api') })
+                        .filter({ file -> !file.path.contains('/entity') })
         )
     }
 
