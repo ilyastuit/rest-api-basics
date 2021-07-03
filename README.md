@@ -1,5 +1,10 @@
 # REST API Basics
 
+#### Repository integration tests (coverage 100%)
+![](media/integration-tests.png)
+#### Service layer unit tests (coverage 88%)
+![](media/service-layer-unit-tests.png)
+
 ### Task
 
 #### Recommended Timeline
