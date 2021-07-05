@@ -1,7 +1,7 @@
 package com.epam.esm.service.error;
 
 public enum ErrorCode {
-    Tag("01"), GiftCertificate("02");
+    GIFT_CERTIFICATE("01"), TAG("02");
 
     private final String code;
 

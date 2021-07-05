@@ -1,7 +1,6 @@
 package com.epam.esm.repository.giftcertificate;
 
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.giftcertificate.GiftCertificate;
 import com.epam.esm.repository.tag.TagRepository;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -25,20 +24,17 @@ public class GiftCertificateResultSetExtractor implements ResultSetExtractor<Lis
     @Override
     public List<GiftCertificate> extractData(ResultSet resultSet) throws SQLException, DataAccessException {
         List<GiftCertificate> giftList = new ArrayList<>();
-        List<Tag> tagList = new ArrayList<>();
 
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
             GiftCertificate giftCertificate = new GiftCertificate(id);
             extractRow(giftCertificate, resultSet);
 
-            giftList.add(giftCertificate);
-        }
-
-        if (this.withTags) {
-            for (GiftCertificate giftCertificate: giftList) {
+            if (this.withTags) {
                 giftCertificate.setTags(this.tagRepository.findByGiftCertificateId(giftCertificate.getId()));
             }
+
+            giftList.add(giftCertificate);
         }
 
         return giftList;

@@ -1,8 +1,6 @@
-package com.epam.esm.entity;
+package com.epam.esm.entity.giftcertificate;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.epam.esm.entity.tag.Tag;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -11,22 +9,16 @@ import java.util.List;
 import java.util.Objects;
 
 public class GiftCertificate {
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+
     private Integer id;
     private String name;
     private String description;
     private BigDecimal price;
     private Integer duration;
 
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime createDate;
-
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime lastUpdateDate;
 
-    @JsonDeserialize(as= ArrayList.class, contentAs=Tag.class)
     private List<Tag> tags;
 
     public GiftCertificate() {
@@ -112,7 +104,10 @@ public class GiftCertificate {
     }
 
     public List<Tag> getTags() {
-        return tags;
+        if (this.tags == null) {
+            this.tags = new ArrayList<>();
+        }
+        return this.tags;
     }
 
     public void setTags(List<Tag> tags) {

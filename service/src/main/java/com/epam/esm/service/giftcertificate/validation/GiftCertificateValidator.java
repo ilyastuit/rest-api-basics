@@ -1,7 +1,7 @@
 package com.epam.esm.service.giftcertificate.validation;
 
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.giftcertificate.GiftCertificateDTO;
+import com.epam.esm.entity.tag.TagDTO;
 import com.epam.esm.service.tag.validation.TagValidator;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class GiftCertificateValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return GiftCertificate.class.equals(clazz);
+        return GiftCertificateDTO.class.equals(clazz);
     }
 
     @Override
@@ -31,21 +31,21 @@ public class GiftCertificateValidator implements Validator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "name.empty", "Name is required and should not be empty.");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "description.empty", "Description is required and should not be empty.");
 
-        GiftCertificate giftCertificate = (GiftCertificate) target;
+        GiftCertificateDTO giftCertificateDTO = (GiftCertificateDTO) target;
 
-        if (giftCertificate.getPrice() == null || giftCertificate.getPrice().compareTo(BigDecimal.valueOf(0)) < 0) {
+        if (giftCertificateDTO.getPrice() == null || giftCertificateDTO.getPrice().compareTo(BigDecimal.valueOf(0)) < 0) {
             errors.rejectValue("price", "price.required", "Price is required and should be positive.");
         }
-        if (giftCertificate.getDuration() == null || giftCertificate.getDuration() <= 0) {
+        if (giftCertificateDTO.getDuration() == null || giftCertificateDTO.getDuration() <= 0) {
             errors.rejectValue("duration", "duration.required", "Duration is required and should be greater than zero.");
         }
 
-        if (giftCertificate.getTags() != null && !giftCertificate.getTags().isEmpty()) {
+        if (giftCertificateDTO.getTags() != null && !giftCertificateDTO.getTags().isEmpty()) {
             int i = 0;
-            for(Tag tag : giftCertificate.getTags()) {
+            for(TagDTO tagDTO : giftCertificateDTO.getTags()) {
                 try {
                     errors.pushNestedPath("tags["+ i++ +"]");
-                    ValidationUtils.invokeValidator(this.tagValidator.fromGiftCertificate(), tag, errors);
+                    ValidationUtils.invokeValidator(this.tagValidator.fromGiftCertificate(), tagDTO, errors);
                 } finally {
                     errors.popNestedPath();
                 }

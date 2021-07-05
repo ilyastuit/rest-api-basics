@@ -1,7 +1,6 @@
 package com.epam.esm.repository.tag;
 
-import com.epam.esm.entity.Tag;
-import com.epam.esm.repository.exceptions.TagNameAlreadyExistException;
+import com.epam.esm.entity.tag.Tag;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -34,14 +33,11 @@ public class TagRepository {
         return jdbcTemplate.query("SELECT t.id, t.name FROM gifts.tag t", new TagResultSetExtractor());
     }
 
-    public int save(Tag tag) throws TagNameAlreadyExistException {
+    public int save(Tag tag) throws DuplicateKeyException {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         final String SQL = "INSERT INTO gifts.tag (name) VALUES (:name)";
-        try {
-            this.namedParameterJdbcTemplate.update(SQL, new MapSqlParameterSource().addValue("name",tag.getName()), keyHolder, new String[] {"id"});
-        } catch (DuplicateKeyException exception) {
-            throw new TagNameAlreadyExistException(tag.getName());
-        }
+
+        this.namedParameterJdbcTemplate.update(SQL, new MapSqlParameterSource().addValue("name",tag.getName()), keyHolder, new String[] {"id"});
         return keyHolder.getKey().intValue();
     }
 
@@ -69,11 +65,9 @@ public class TagRepository {
     }
 
     public void deleteById(int id) {
-        final String firstSql = "DELETE FROM gifts.gift_certificate_tag WHERE tag_id = ?";
-        final String secondSql = "DELETE FROM gifts.tag WHERE id = ?";
+        final String SQL = "DELETE FROM gifts.tag WHERE id = ?";
         transactionTemplate.execute(status -> {
-            this.jdbcTemplate.update(firstSql, id);
-            this.jdbcTemplate.update(secondSql, id);
+            this.jdbcTemplate.update(SQL, id);
             return null;
         });
     }

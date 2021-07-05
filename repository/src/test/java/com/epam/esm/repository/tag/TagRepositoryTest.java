@@ -1,16 +1,16 @@
-package com.epam.esm.repository;
+package com.epam.esm.repository.tag;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.epam.esm.builder.TagBuilder;
 import com.epam.esm.TestEnvironment;
-import com.epam.esm.entity.Tag;
-import com.epam.esm.repository.exceptions.TagNameAlreadyExistException;
+import com.epam.esm.entity.tag.Tag;
 import com.epam.esm.repository.tag.TagRepository;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.DuplicateKeyException;
 
 public class TagRepositoryTest {
 
@@ -50,7 +50,7 @@ public class TagRepositoryTest {
     }
 
     @Test
-    void successSave() throws TagNameAlreadyExistException {
+    void successSave() throws DuplicateKeyException {
         Tag originalTag = tagBuilder.withId(TagBuilder.NOT_EXIST_TAG_ID).withName(TagBuilder.NOT_EXIST_TAG_NAME).build();
         assertEquals(TagBuilder.ALL_TAGS_COUNT + 1, tagRepository.save(originalTag));
 
@@ -61,7 +61,7 @@ public class TagRepositoryTest {
 
     @Test
     void failSave() {
-        assertThrows(TagNameAlreadyExistException.class, () -> {
+        assertThrows(DuplicateKeyException.class, () -> {
             tagRepository.save(tagBuilder.withName(TagBuilder.EXIST_TAG_NAME).build());
         });
     }

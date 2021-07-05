@@ -22,7 +22,7 @@ public class TagValidationErrors implements HttpError {
 
     @Override
     public String getCode() {
-        return getStatus().value() + ErrorCode.Tag.getCode();
+        return getStatus().value() + ErrorCode.TAG.getCode();
     }
 
     @Override

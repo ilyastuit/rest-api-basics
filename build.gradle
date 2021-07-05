@@ -19,17 +19,26 @@ allprojects {
         implementation "org.springframework:spring-jdbc:${springVersion}"
         implementation "org.springframework:spring-web:${springVersion}"
         implementation "org.springframework:spring-webmvc:${springVersion}"
-        implementation 'org.postgresql:postgresql:42.2.22'
         implementation 'javax.servlet:javax.servlet-api:4.0.1'
+
+        implementation 'org.postgresql:postgresql:42.2.22'
+
+        implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+        annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+
         implementation 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.12.3'
         implementation 'com.fasterxml.jackson.module:jackson-module-parameter-names:2.12.3'
         implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.3'
         implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.9.3'
+
         implementation 'org.apache.logging.log4j:log4j-api:2.14.1'
         implementation 'org.apache.logging.log4j:log4j-core:2.14.1'
 
         testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
         testImplementation 'org.mockito:mockito-core:3.11.1'
+        testImplementation 'org.mockito:mockito-junit-jupiter:3.11.2'
+        testImplementation 'org.junit.platform:junit-platform-runner:1.8.0-M1'
+        testImplementation 'org.junit.vintage:junit-vintage-engine:5.8.0-M1'
     }
 
     test {
@@ -48,6 +57,7 @@ allprojects {
                 fileTree(dir: "build/classes/java/main/com/epam/esm")
                         .filter({ file -> !file.path.contains('/config') })
                         .filter({ file -> !file.path.contains('/api') })
+                        .filter({ file -> !file.path.contains('/entity') })
         )
     }
 
