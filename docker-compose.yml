@@ -4,7 +4,7 @@ services:
   tomcat:
     build:
       context: ./
-      dockerfile: ./docker/tomcat/Dockerfile
+      dockerfile: ./docker/dev/tomcat/Dockerfile
     container_name: tomcat
     environment:
       JAVA_OPTS: -Dspring.profiles.active=dev
@@ -12,8 +12,8 @@ services:
       - postgres
       - postgres-test
     volumes:
-    - ./docker/tomcat/tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml
-    - ./docker/tomcat/context.xml:/usr/local/tomcat/webapps/manager/META-INF/context.xml
+    - ./docker/dev/tomcat/tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml
+    - ./docker/dev/tomcat/context.xml:/usr/local/tomcat/webapps/manager/META-INF/context.xml
     - ./api/build/libs/rest-api-basics.war:/usr/local/tomcat/webapps/rest-api-basics.war
     ports:
       - 8082:8080

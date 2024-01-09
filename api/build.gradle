@@ -4,7 +4,7 @@ version '1.0-SNAPSHOT'
 apply plugin: 'war'
 
 war {
-    archiveName 'rest-api-basics.war'
+    archiveFileName = 'rest-api-basics.war'
 }
 
 dependencies {
