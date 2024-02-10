@@ -1,0 +1,11 @@
+spring:
+  flyway:
+    enabled: false
+
+log4j:
+  rootLogger: WARN
+  appender:
+    file: org.apache.log4j.RollingFileAppender
+  File: log/application.log
+  layout: org.apache.log4j.PatternLayout
+  layout.ConversionPattern: "[%t] %-5p %c %x - %m%n"

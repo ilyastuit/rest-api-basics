@@ -2,10 +2,15 @@ group 'com.epam.esm.config'
 version '1.0'
 
 def props = new Properties()
-file("./src/main/resources/application.properties").withInputStream { props.load(it) }
+file(PROPERTIES_FILE_PATH).withInputStream {
+    props.load(it)
+}
 
-if (props.getProperty("spring.profiles.active") == "dev") {
-    file("./src/main/resources/application-dev.properties").withInputStream { props.load(it) }
+if (props.getProperty(SPRING_PROFILE_ACTIVE_KEY) == "dev") {
+    file(DEV_PROPERTIES_FILE_PATH)
+            .withInputStream {
+                props.load(it)
+            }
 }
 
 buildscript {
@@ -15,7 +20,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "gradle.plugin.org.flywaydb:gradle-plugin-publishing:7.10.0"
+        classpath "gradle.plugin.org.flywaydb:gradle-plugin-publishing:${flywayVersion}"
     }
 }
 
