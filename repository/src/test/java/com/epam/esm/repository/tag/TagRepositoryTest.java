@@ -1,16 +1,16 @@
 package com.epam.esm.repository.tag;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import com.epam.esm.builder.TagBuilder;
 import com.epam.esm.TestEnvironment;
+import com.epam.esm.builder.TagBuilder;
 import com.epam.esm.entity.tag.Tag;
-import com.epam.esm.repository.tag.TagRepository;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DuplicateKeyException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TagRepositoryTest {
 

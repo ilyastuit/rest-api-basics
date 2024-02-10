@@ -1,3 +1,9 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+    }
+}
+
 rootProject.name = 'rest-api-basics'
 
 include ':api', ':service', ':config', ':entity', ':repository'

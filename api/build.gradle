@@ -1,15 +1,26 @@
+plugins {
+    id 'war'
+    id 'java-library'
+}
+
 group 'com.epam.esm.api'
 version '1.0'
-
-apply plugin: 'war'
 
 war {
     archiveFileName = 'rest-api-basics.war'
 }
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     implementation project(':config')
+    implementation project(':entity')
     implementation project(':service')
     implementation project(':repository')
-    implementation project(':entity')
+
+    implementation "org.springframework:spring-webmvc:${springVersion}"
+
+    implementation "javax.servlet:javax.servlet-api:${servletApiVersion}"
 }
